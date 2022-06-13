@@ -1,0 +1,5 @@
+{"http_path": "/sql/1.0/endpoints/<endpoint-id",
+"host_name": "<host_name>",
+"token": "<token>",
+"database": "plotly_iot_dashboard"
+}
