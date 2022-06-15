@@ -31,6 +31,15 @@ print(f"Starting from scratch: {startOver}")
 
 # COMMAND ----------
 
+if startOver == "Yes":
+  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.silver_sensors")
+  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.silver_users")
+  
+  dbutils.fs.rm(checkpoint_stream_location_device, recurse=True)
+  dbutils.fs.rm(checkpoint_stream_location_user, recurse=True)
+
+# COMMAND ----------
+
 checkpoint_stream_location_device = f"/FileStore/{dbutils.notebook.entry_point.getDbutils().notebook().getContext().userName().get()}/iot_pipeline/checkpoints/device/"
 auto_loader_schema_location_device = f"/FileStore/{dbutils.notebook.entry_point.getDbutils().notebook().getContext().userName().get()}/iot_pipeline/schemas/device/"
 
@@ -54,17 +63,6 @@ df_devices = (spark
              )
 
 #display(df_devices)
-
-# COMMAND ----------
-
-if startOver == "Yes":
-  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.bronze_sensors")
-  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.silver_sensors")
-  
-  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.bronze_users")
-  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.silver_users")
-  
-  dbutils.fs.rm(checkpoint_stream_location_device, recurse=True)
 
 # COMMAND ----------
 
@@ -122,8 +120,6 @@ TBLPROPERTIES("delta.targetFileSize"="128mb")
 # MAGIC   target.num_steps = source.num_steps,
 # MAGIC   target.timestamp = source.timestamp
 # MAGIC WHEN NOT MATCHED THEN INSERT *;
-# MAGIC 
-# MAGIC TRUNCATE TABLE plotly_iot_dashboard.bronze_sensors;
 
 # COMMAND ----------
 
@@ -189,12 +185,6 @@ TBLPROPERTIES("delta.targetFileSize"="128mb")
 
 # MAGIC %sql
 # MAGIC 
-# MAGIC SELECT * FROM plotly_iot_dashboard.bronze_users
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC 
 # MAGIC MERGE INTO plotly_iot_dashboard.silver_users AS target
 # MAGIC USING (SELECT 
 # MAGIC       userid::int,
@@ -224,5 +214,19 @@ TBLPROPERTIES("delta.targetFileSize"="128mb")
 # MAGIC       target.input_file_name = source.input_file_name,
 # MAGIC       target.update_timestamp = source.update_timestamp
 # MAGIC WHEN NOT MATCHED THEN INSERT *;
+
+# COMMAND ----------
+
+#spark.sql("""TRUNCATE TABLE plotly_iot_dashboard.bronze_users""")
+
+# COMMAND ----------
+
+# MAGIC %sql
 # MAGIC 
-# MAGIC TRUNCATE TABLE plotly_iot_dashboard.bronze_users;
+# MAGIC SELECT * FROM plotly_iot_dashboard.silver_users;
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC 
+# MAGIC SELECT * FROM plotly_iot_dashboard.silver_sensors;
