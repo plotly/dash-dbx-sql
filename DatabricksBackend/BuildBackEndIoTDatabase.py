@@ -58,11 +58,11 @@ df_devices = (spark
 # COMMAND ----------
 
 if startOver == "Yes":
-  spark.sql("TRUNCATE TABLE IF EXISTS plotly_iot_dashboard.bronze_sensors")
-  spark.sql("TRUNCATE TABLE IF EXISTS plotly_iot_dashboard.silver_sensors")
+  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.bronze_sensors")
+  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.silver_sensors")
   
-  spark.sql("TRUNCATE TABLE IF EXISTS plotly_iot_dashboard.bronze_users")
-  spark.sql("TRUNCATE TABLE IF EXISTS plotly_iot_dashboard.silver_users")
+  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.bronze_users")
+  spark.sql("TRUNCATE TABLE plotly_iot_dashboard.silver_users")
   
   dbutils.fs.rm(checkpoint_stream_location_device, recurse=True)
 
@@ -189,6 +189,12 @@ TBLPROPERTIES("delta.targetFileSize"="128mb")
 
 # MAGIC %sql
 # MAGIC 
+# MAGIC SELECT * FROM plotly_iot_dashboard.bronze_users
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC 
 # MAGIC MERGE INTO plotly_iot_dashboard.silver_users AS target
 # MAGIC USING (SELECT 
 # MAGIC       userid::int,
@@ -219,4 +225,4 @@ TBLPROPERTIES("delta.targetFileSize"="128mb")
 # MAGIC       target.update_timestamp = source.update_timestamp
 # MAGIC WHEN NOT MATCHED THEN INSERT *;
 # MAGIC 
-# MAGIC TRUNCATE TABLE plotly_iot_dashboard.silver_users;
+# MAGIC TRUNCATE TABLE plotly_iot_dashboard.bronze_users;
