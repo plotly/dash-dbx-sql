@@ -16,55 +16,72 @@ app.layout = html.Div(
                 html.H1("Dash with Databricks"),
             ]
         ),
-        html.Div(
-            [
-                html.Label("Select the color comparison category: "),
-                dcc.Dropdown(
-                    id="comparison",
-                    options=[
-                        {"label": "Sex", "value": "sex"},
-                        {"label": "Smoker?", "value": "Smoker"},
-                        {"label": "Cholesterol Level", "value": "cholesterol"},
-                        {"label": "Blood Pressure", "value": "bloodpressure"},
-                    ],
-                    value="sex",
-                ),
-            ],
-            style={"width": "100%"},
-        ),
         dmc.Grid(
             [
-                dmc.Col(
+                html.Div(
                     [
-                        html.Label("Select the x axis category: "),
-                        dcc.RadioItems(
-                            id="scatter-x",
+                        html.Label("Select the color comparison category: "),
+                        dcc.Dropdown(
+                            id="comparison",
                             options=[
-                                {"label": "Age", "value": "age"},
-                                {"label": "Height", "value": "height"},
-                                {"label": "Weight", "value": "weight"},
+                                {"label": "Sex", "value": "sex"},
+                                {"label": "Smoker?", "value": "Smoker"},
+                                {"label": "Cholesterol Level", "value": "cholesterol"},
+                                {"label": "Blood Pressure", "value": "bloodpressure"},
                             ],
-                            value="age",
+                            value="sex",
                         ),
-                        dcc.Graph(id="demographics"),
                     ],
+                    style={"width": "60%", "text-align": "center"},
                 ),
                 dmc.Col(
-                    [
-                        html.Label("Select the y axis category: "),
-                        dcc.RadioItems(
-                            id="line-y",
-                            options=[
-                                {"label": "Calories Burned", "value": "calories_burnt"},
-                                {"label": "Miles Walked", "value": "miles_walked"},
-                                {"label": "Number of Steps", "value": "num_steps"},
-                            ],
-                            value="calories_burnt",
-                        ),
-                        dcc.Graph(id="fitness-line"),
-                    ]
+                    html.Div(
+                        [
+                            html.Label("Select the x axis category: "),
+                            dcc.RadioItems(
+                                id="scatter-x",
+                                options=[
+                                    {"label": "Age", "value": "age"},
+                                    {"label": "Height", "value": "height"},
+                                    {"label": "Weight", "value": "weight"},
+                                ],
+                                value="age",
+                            ),
+                            dcc.Graph(id="demographics"),
+                        ],
+                    ),
+                    span=6,
+                    style={
+                        "border": f"2px solid {dmc.theme.DEFAULT_COLORS['indigo'][4]}",
+                    },
                 ),
-            ]
+                dmc.Col(
+                    html.Div(
+                        [
+                            html.Label("Select the y axis category: "),
+                            dcc.RadioItems(
+                                id="line-y",
+                                options=[
+                                    {
+                                        "label": "Calories Burned",
+                                        "value": "calories_burnt",
+                                    },
+                                    {"label": "Miles Walked", "value": "miles_walked"},
+                                    {"label": "Number of Steps", "value": "num_steps"},
+                                ],
+                                value="calories_burnt",
+                            ),
+                            dcc.Graph(id="fitness-line"),
+                        ],
+                    ),
+                    span=6,
+                    style={
+                        "border": f"2px solid {dmc.theme.DEFAULT_COLORS['indigo'][4]}",
+                    },
+                ),
+            ],
+            justify="center",
+            gutter="xl",
         ),
     ],
 )
@@ -72,24 +89,17 @@ app.layout = html.Div(
 
 @app.callback(
     Output("demographics", "figure"),
-    Input("scatter-x", "value"),
-    Input("comparison", "value"),
-)
-def make_scatter(xaxis, comp):
-    df = dbx_utils.get_user_data(xaxis, comp)
-    scatterfig = chart_utils.generate_scatter(df, xaxis, comp)
-    return scatterfig
-
-
-@app.callback(
     Output("fitness-line", "figure"),
+    Input("scatter-x", "value"),
     Input("line-y", "value"),
     Input("comparison", "value"),
 )
-def make_line(yaxis, comp):
-    df = dbx_utils.join_user_sensor(yaxis, comp)
-    linefig = chart_utils.generate_line(df, yaxis, comp)
-    return linefig
+def make_graphs(xaxis, yaxis, comp):
+    dfscatter = dbx_utils.get_user_data(xaxis, comp)
+    dfline = dbx_utils.join_user_sensor(yaxis, comp)
+    scatterfig = chart_utils.generate_scatter(dfscatter, xaxis, comp)
+    linefig = chart_utils.generate_line(dfline, yaxis, comp)
+    return scatterfig, linefig
 
 
 if __name__ == "__main__":
