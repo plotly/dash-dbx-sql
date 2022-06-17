@@ -78,7 +78,7 @@ def generate_heat(df, axis1, axis2, fitness, comp):
         labels={
             axis1: axis_labels[axis1],
             axis2: axis_labels[axis2],
-            fitness: axis_labels[fitness],
+            f"{fitness}tot": axis_labels[fitness],
             comp: axis_labels[comp],
         },
     )
