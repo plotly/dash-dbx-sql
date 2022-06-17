@@ -50,3 +50,36 @@ def generate_line(df, yaxis, comp):
         title=f"Comparative Daily Fitness Metrics by Demographic",
     )
     return line
+
+
+def generate_heat(df, axis1, axis2, fitness, comp):
+    axis_labels = {
+        "calories_burnt": "Calories Burned Daily",
+        "miles_walked": "Miles Walked Daily",
+        "num_steps": "Total Daily Steps",
+        "sex": "Sex",
+        "Smoker": "Smoker?",
+        "cholesterol": "Cholesterol Level",
+        "bloodpressure": "Blood Pressure",
+        "age": "Age (years)",
+        "height": "Height (inches)",
+        "weight": "Weight (lbs)",
+    }
+    bin_sizes = {"age": 10, "height": 5, "weight": 20}
+    heat = px.density_heatmap(
+        df,
+        x=axis1,
+        y=axis2,
+        z=f"{fitness}tot",
+        histfunc="avg",
+        facet_col=comp,
+        nbinsx=bin_sizes[axis1],
+        nbinsy=bin_sizes[axis2],
+        labels={
+            axis1: axis_labels[axis1],
+            axis2: axis_labels[axis2],
+            fitness: axis_labels[fitness],
+            comp: axis_labels[comp],
+        },
+    )
+    return heat

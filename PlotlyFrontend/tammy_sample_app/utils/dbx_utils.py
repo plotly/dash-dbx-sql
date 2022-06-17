@@ -17,7 +17,7 @@ DEVICE_TABLE = "silver_sensors"
 
 def get_user_data(xaxis, comp):
     """
-    Fetches data from the Databricks database and returns it as a pandas dataframe
+    Fetches specified columns and an aggregated column from the silver_users table, returns it as a pandas dataframe
 
     Returns
     -------
@@ -52,21 +52,21 @@ def get_user_data(xaxis, comp):
 
 def join_user_sensor(yaxis, comp):
     """
-    Fetches data from the Databricks database and returns it as a pandas dataframe
+    Joins the user and sensor tables, selects specified columns and an aggregated column, returns it as a pandas dataframe
 
     Returns
     -------
     df : pandas dataframe
         basic query of data from Databricks as a pandas dataframe
     """
-    connection = sql.connect(
+    connection1 = sql.connect(
         server_hostname=SERVER_HOSTNAME,
         http_path=HTTP_PATH,
         access_token=ACCESS_TOKEN,
     )
-    cursor = connection.cursor()
-    cursor.execute(
-        f"""SELECT date, {comp}, SUM({yaxis}) AS {yaxis}tot 
+    cursor1 = connection1.cursor()
+    cursor1.execute(
+        f"""SELECT date, {comp}, AVG({yaxis}) AS {yaxis}tot 
             FROM(
                 SELECT
                 CASE WHEN gender='F' THEN 'Female' ELSE 'Male' END AS sex, 
@@ -81,8 +81,46 @@ def join_user_sensor(yaxis, comp):
             ORDER BY date
             """
     )
-    df = cursor.fetchall_arrow()
+    df = cursor1.fetchall_arrow()
     df = df.to_pandas()
-    cursor.close()
-    connection.close()
+    cursor1.close()
+    connection1.close()
+    return df
+
+
+def get_heat_data(axis1, axis2, fitness, comp, slider):
+    """
+    Fetches data from the Databricks database and returns it as a pandas dataframe
+
+    Returns
+    -------
+    df : pandas dataframe
+        basic query of data from Databricks as a pandas dataframe
+    """
+    connection2 = sql.connect(
+        server_hostname=SERVER_HOSTNAME,
+        http_path=HTTP_PATH,
+        access_token=ACCESS_TOKEN,
+    )
+    cursor2 = connection2.cursor()
+    cursor2.execute(
+        f"""SELECT {axis1}, {axis2}, {comp}, AVG({fitness}) AS {fitness}tot 
+            FROM(
+                SELECT
+                CASE WHEN gender='F' THEN 'Female' ELSE 'Male' END AS sex, 
+                CASE WHEN smoker='N' THEN 'Non-smoker' ELSE 'Smoker' END AS Smoker,
+                cholestlevs AS cholesterol, bp AS bloodpressure,
+                num_steps, miles_walked, calories_burnt, age, height, weight
+                FROM {DB_NAME}.{DEVICE_TABLE}
+                LEFT JOIN {DB_NAME}.{USER_TABLE} ON {DEVICE_TABLE}.user_id = {USER_TABLE}.userid
+                WHERE {fitness} BETWEEN ((SELECT MAX({fitness}) FROM {DB_NAME}.{DEVICE_TABLE})*{slider[0]}*0.01) 
+                AND ((SELECT MAX({fitness}) FROM {DB_NAME}.{DEVICE_TABLE})*{slider[1]}*0.01)
+            )
+            GROUP BY {comp}, {axis1}, {axis2}
+            """
+    )
+    df = cursor2.fetchall_arrow()
+    df = df.to_pandas()
+    cursor2.close()
+    connection2.close()
     return df

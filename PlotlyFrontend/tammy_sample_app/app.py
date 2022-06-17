@@ -7,12 +7,13 @@ from utils import dbx_utils, chart_utils
 app = dash.Dash(__name__)
 app.title = "dash-dbx"
 server = app.server  # expose server variable for Procfile
+# app.config.suppress_callback_exceptions = True
 
 app.layout = html.Div(
     [
         html.Header(
             [
-                html.Img(src=app.get_asset_url("plotly_logo.png"), width="23%"),
+                html.Img(src=app.get_asset_url("plotly_logo.png"), width="17%"),
                 html.H1("Dash with Databricks"),
             ]
         ),
@@ -48,6 +49,16 @@ app.layout = html.Div(
                                 value="age",
                             ),
                             dcc.Graph(id="demographics"),
+                            dcc.Markdown(
+                                """
+                                The data used for this graph comes from the silver_users table which contains patient demographic data.
+                                A "group by" and "count" aggregation combo are implemented via SQL statement. The columns pulled into the Dash app
+                                are user-determined such that only data that is displayed is retrieved from SQL to improve latency. The "risk" column, 
+                                the selected x-axis category column and the selected comparison category column are pulled and a calculated column counting the number of patients
+                                that fall into each unique combo of column values is also pulled. The calculation happens in Databricks and data is re-queried when the user
+                                changes either the x axis category or comparison category.
+                                """
+                            ),
                         ],
                     ),
                     span=6,
@@ -72,6 +83,16 @@ app.layout = html.Div(
                                 value="calories_burnt",
                             ),
                             dcc.Graph(id="fitness-line"),
+                            dcc.Markdown(
+                                """
+                                The data used for this graph comes from the silver_users and silver_sensors tables. A join of the tables is done in SQL
+                                wherein the sensor data is matched to the demographic data for that patient on the shared "user_id" column from each table.
+                                The fitness metrics (number of steps, burned calories, miles walked) are reported by the sensors/devices for some date/time.
+                                A single SQL query is used to pull the data for a user-specified fitness metric, averaged by specified demographic group,
+                                broken down by comparison category, per day.
+                                
+                                """
+                            ),
                         ],
                     ),
                     span=6,
@@ -83,23 +104,161 @@ app.layout = html.Div(
             justify="center",
             gutter="xl",
         ),
+        dmc.Grid(
+            [
+                dmc.Col(
+                    [
+                        html.Div(
+                            [
+                                html.Label("Select the x axis category:"),
+                                dcc.Dropdown(
+                                    id="heat-x",
+                                    options=[
+                                        {"label": "Age", "value": "age"},
+                                        {"label": "Height", "value": "height"},
+                                        {"label": "Weight", "value": "weight"},
+                                    ],
+                                    value="age",
+                                ),
+                            ]
+                        )
+                    ],
+                    span=3,
+                ),
+                dmc.Col(
+                    [
+                        html.Div(
+                            [
+                                html.Label("Select the y axis category:"),
+                                dcc.Dropdown(
+                                    id="heat-y",
+                                    options=[
+                                        {"label": "Age", "value": "age"},
+                                        {"label": "Height", "value": "height"},
+                                        {"label": "Weight", "value": "weight"},
+                                    ],
+                                    value="height",
+                                ),
+                            ]
+                        )
+                    ],
+                    span=3,
+                ),
+                dmc.Col(
+                    [
+                        html.Div(
+                            [
+                                html.Label("Select the fitness metric:"),
+                                dcc.RadioItems(
+                                    id="heat-fitness",
+                                    options=[
+                                        {
+                                            "label": "Calories Burned",
+                                            "value": "calories_burnt",
+                                        },
+                                        {
+                                            "label": "Miles Walked",
+                                            "value": "miles_walked",
+                                        },
+                                        {
+                                            "label": "Number of Steps",
+                                            "value": "num_steps",
+                                        },
+                                    ],
+                                    value="calories_burnt",
+                                ),
+                            ]
+                        )
+                    ],
+                    span=3,
+                ),
+                dmc.Col(
+                    [
+                        html.Div(
+                            [
+                                html.Label("Select the fitness metric range: "),
+                                dcc.RangeSlider(
+                                    id="slider-val",
+                                    min=1,
+                                    max=100,
+                                    step=None,
+                                    value=[1, 100],
+                                ),
+                            ]
+                        )
+                    ],
+                    span=3,
+                ),
+            ]
+        ),
+        dmc.Grid(
+            [
+                dmc.Col(
+                    [
+                        html.Div(
+                            [
+                                dcc.Graph(id="heat-fig"),
+                                dcc.Markdown(
+                                    """
+                                    The data used for this graph comes from the silver_users and silver_sensors tables. 
+                                    A join of the tables is done in SQL wherein the sensor data is matched to the 
+                                    demographic data for that patient on the shared "user_id" column from each table.
+                                    The fitness metrics (number of steps, burned calories, miles walked) are reported 
+                                    by the sensors/devices for some date/time. A single SQL query is used to pull the 
+                                    data for a user-specified fitness metric, averaged by specified demographic group 
+                                    over all days, broken down by comparison category. The graphs show the dependence of
+                                    fitness metrics on the intersection of two demographic categories (x and y axis),
+                                    one graph per comparison category. For example, when looking at age and height,
+                                    the highest average calories burned per day by female patients is in the 40-44 year olds
+                                    with height between 60-64 inches whereas for male patients it's in the 50-54 year old range
+                                    with height between 75-79 inches.
+                                    """
+                                ),
+                            ]
+                        ),
+                    ],
+                    span=12,
+                ),
+            ]
+        ),
     ],
 )
 
 
 @app.callback(
     Output("demographics", "figure"),
-    Output("fitness-line", "figure"),
     Input("scatter-x", "value"),
+    Input("comparison", "value"),
+)
+def make_scatter(xaxis, comp):
+    dfscatter = dbx_utils.get_user_data(xaxis, comp)
+    scatterfig = chart_utils.generate_scatter(dfscatter, xaxis, comp)
+    return scatterfig
+
+
+@app.callback(
+    Output("fitness-line", "figure"),
     Input("line-y", "value"),
     Input("comparison", "value"),
 )
-def make_graphs(xaxis, yaxis, comp):
-    dfscatter = dbx_utils.get_user_data(xaxis, comp)
+def make_line(yaxis, comp):
     dfline = dbx_utils.join_user_sensor(yaxis, comp)
-    scatterfig = chart_utils.generate_scatter(dfscatter, xaxis, comp)
     linefig = chart_utils.generate_line(dfline, yaxis, comp)
-    return scatterfig, linefig
+    return linefig
+
+
+@app.callback(
+    Output("heat-fig", "figure"),
+    Input("heat-x", "value"),
+    Input("heat-y", "value"),
+    Input("heat-fitness", "value"),
+    Input("comparison", "value"),
+    Input("slider-val", "value"),
+)
+def make_heat(xaxis, yaxis, fitness, comp, slider):
+    dfheat = dbx_utils.get_heat_data(xaxis, yaxis, fitness, comp, slider)
+    heatfig = chart_utils.generate_heat(dfheat, xaxis, yaxis, fitness, comp)
+    return heatfig
 
 
 if __name__ == "__main__":
