@@ -15,9 +15,9 @@ USER_TABLE = "silver_users"
 DEVICE_TABLE = "silver_sensors"
 
 
-def get_user_data(xaxis, comp):
+def get_user_data(user):
     """
-    Fetches specified columns and an aggregated column from the silver_users table, returns it as a pandas dataframe
+    Fetches user data for a specific user id from silver_users table, returns it as a pandas dataframe
 
     Returns
     -------
@@ -31,6 +31,42 @@ def get_user_data(xaxis, comp):
     )
     cursor = connection.cursor()
     cursor.execute(
+        f"""SELECT * 
+            FROM(
+                SELECT
+                CASE WHEN gender='F' THEN 'Female' ELSE 'Male' END AS sex, 
+                CASE WHEN smoker='N' THEN 'Non-smoker' ELSE 'Smoker' END AS Smoker,
+                cholestlevs AS cholesterol, bp AS bloodpressure,
+                num_steps, miles_walked, calories_burnt, timestamp, user_id
+                FROM {DB_NAME}.{DEVICE_TABLE}
+                LEFT JOIN {DB_NAME}.{USER_TABLE} ON {DEVICE_TABLE}.user_id = {USER_TABLE}.userid
+            )
+            WHERE user_id = {user}
+            """
+    )
+    df = cursor.fetchall_arrow()
+    df = df.to_pandas()
+    cursor.close()
+    connection.close()
+    return df
+
+
+def get_scatter_data(xaxis, comp):
+    """
+    Fetches specified columns and an aggregated column from the silver_users table, returns it as a pandas dataframe
+
+    Returns
+    -------
+    df : pandas dataframe
+        basic query of data from Databricks as a pandas dataframe
+    """
+    connection0 = sql.connect(
+        server_hostname=SERVER_HOSTNAME,
+        http_path=HTTP_PATH,
+        access_token=ACCESS_TOKEN,
+    )
+    cursor0 = connection0.cursor()
+    cursor0.execute(
         f"""SELECT {xaxis}, {comp}, risk, Count(*) AS Total 
             FROM(
                 SELECT
@@ -43,14 +79,14 @@ def get_user_data(xaxis, comp):
             GROUP BY {xaxis}, {comp}, risk
             """
     )
-    df = cursor.fetchall_arrow()
+    df = cursor0.fetchall_arrow()
     df = df.to_pandas()
-    cursor.close()
-    connection.close()
+    cursor0.close()
+    connection0.close()
     return df
 
 
-def join_user_sensor(yaxis, comp):
+def get_line_data(yaxis, comp):
     """
     Joins the user and sensor tables, selects specified columns and an aggregated column, returns it as a pandas dataframe
 
@@ -123,4 +159,21 @@ def get_heat_data(axis1, axis2, fitness, comp, slider):
     df = df.to_pandas()
     cursor2.close()
     connection2.close()
+    return df
+
+
+def get_listofusers():
+    connection3 = sql.connect(
+        server_hostname=SERVER_HOSTNAME,
+        http_path=HTTP_PATH,
+        access_token=ACCESS_TOKEN,
+    )
+    cursor3 = connection3.cursor()
+    cursor3.execute(
+        f"SELECT DISTINCT userid FROM {DB_NAME}.{USER_TABLE} ORDER BY userid ASC"
+    )
+    df = cursor3.fetchall_arrow()
+    df = df.to_pandas()
+    cursor3.close()
+    connection3.close()
     return df
