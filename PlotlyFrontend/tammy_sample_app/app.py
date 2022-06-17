@@ -3,6 +3,7 @@ from dash import dcc, html, Input, Output
 import dash_mantine_components as dmc
 import plotly.express as px
 from utils import dbx_utils, chart_utils
+from skimage import io
 
 app = dash.Dash(__name__)
 app.title = "dash-dbx"
@@ -30,12 +31,10 @@ app.layout = html.Div(
                             [
                                 html.Div(
                                     [
-                                        html.Label(
-                                            "Select the color comparison category: "
-                                        ),
-                                        dcc.Dropdown(
+                                        dmc.Select(
                                             id="comparison",
-                                            options=[
+                                            label="Select the color comparison category:",
+                                            data=[
                                                 {"label": "Sex", "value": "sex"},
                                                 {"label": "Smoker?", "value": "Smoker"},
                                                 {
@@ -59,9 +58,9 @@ app.layout = html.Div(
                                     html.Div(
                                         [
                                             html.Label("Select the x axis category: "),
-                                            dcc.RadioItems(
+                                            dmc.RadioGroup(
                                                 id="scatter-x",
-                                                options=[
+                                                data=[
                                                     {"label": "Age", "value": "age"},
                                                     {
                                                         "label": "Height",
@@ -75,7 +74,7 @@ app.layout = html.Div(
                                                 value="age",
                                             ),
                                             dcc.Graph(id="demographics"),
-                                            dcc.Markdown(
+                                            dmc.Text(
                                                 """
             The data used for this graph comes from the silver_users table
             which contains patient demographic data. A "group by" and "count" 
@@ -88,7 +87,8 @@ app.layout = html.Div(
             values is also pulled. The calculation happens in Databricks and data 
             is re-queried when the user changes either the x axis category or 
             comparison category.
-                                                """
+                                                """,
+                                                size="md",
                                             ),
                                         ],
                                     ),
@@ -100,10 +100,10 @@ app.layout = html.Div(
                                 dmc.Col(
                                     html.Div(
                                         [
-                                            html.Label("Select the y axis category: "),
-                                            dcc.RadioItems(
+                                            dmc.RadioGroup(
                                                 id="line-y",
-                                                options=[
+                                                label="Select the y axis category:",
+                                                data=[
                                                     {
                                                         "label": "Calories Burned",
                                                         "value": "calories_burnt",
@@ -120,7 +120,7 @@ app.layout = html.Div(
                                                 value="calories_burnt",
                                             ),
                                             dcc.Graph(id="fitness-line"),
-                                            dcc.Markdown(
+                                            dmc.Text(
                                                 """
             The data used for this graph comes from the silver_users and 
             silver_sensors tables. A join of the tables is done in SQL
@@ -131,7 +131,8 @@ app.layout = html.Div(
             query is used to pull the data for a user-specified fitness metric, 
             averaged by specified demographic group broken down by comparison 
             category, per day.
-                                                """
+                                                """,
+                                                size="md",
                                             ),
                                         ],
                                     ),
@@ -149,74 +150,25 @@ app.layout = html.Div(
                             [
                                 dmc.Col(
                                     [
-                                        html.Div(
-                                            [
-                                                html.Label(
-                                                    "Select the x axis category:"
-                                                ),
-                                                dcc.Dropdown(
-                                                    id="heat-x",
-                                                    options=[
-                                                        {
-                                                            "label": "Age",
-                                                            "value": "age",
-                                                        },
-                                                        {
-                                                            "label": "Height",
-                                                            "value": "height",
-                                                        },
-                                                        {
-                                                            "label": "Weight",
-                                                            "value": "weight",
-                                                        },
-                                                    ],
-                                                    value="age",
-                                                ),
-                                            ],
-                                        )
+                                        dmc.MultiSelect(
+                                            id="heat-axes",
+                                            label="Select the heat plot axes:",
+                                            description="You must select 2 axes categories",
+                                            data=["age", "height", "weight"],
+                                            value=["age", "height"],
+                                            maxSelectedValues=2,
+                                        ),
                                     ],
-                                    span=3,
+                                    span=4,
                                 ),
                                 dmc.Col(
                                     [
                                         html.Div(
                                             [
-                                                html.Label(
-                                                    "Select the y axis category:"
-                                                ),
-                                                dcc.Dropdown(
-                                                    id="heat-y",
-                                                    options=[
-                                                        {
-                                                            "label": "Age",
-                                                            "value": "age",
-                                                        },
-                                                        {
-                                                            "label": "Height",
-                                                            "value": "height",
-                                                        },
-                                                        {
-                                                            "label": "Weight",
-                                                            "value": "weight",
-                                                        },
-                                                    ],
-                                                    value="height",
-                                                ),
-                                            ]
-                                        )
-                                    ],
-                                    span=3,
-                                ),
-                                dmc.Col(
-                                    [
-                                        html.Div(
-                                            [
-                                                html.Label(
-                                                    "Select the fitness metric:"
-                                                ),
-                                                dcc.RadioItems(
+                                                dmc.RadioGroup(
                                                     id="heat-fitness",
-                                                    options=[
+                                                    label="Select the fitness metric:",
+                                                    data=[
                                                         {
                                                             "label": "Calories Burned",
                                                             "value": "calories_burnt",
@@ -235,7 +187,7 @@ app.layout = html.Div(
                                             ]
                                         )
                                     ],
-                                    span=3,
+                                    span=4,
                                 ),
                                 dmc.Col(
                                     [
@@ -254,7 +206,7 @@ app.layout = html.Div(
                                             ]
                                         )
                                     ],
-                                    span=3,
+                                    span=4,
                                 ),
                             ],
                             align="center",
@@ -266,7 +218,7 @@ app.layout = html.Div(
                                         html.Div(
                                             [
                                                 dcc.Graph(id="heat-fig"),
-                                                dcc.Markdown(
+                                                dmc.Text(
                                                     """
                     The data used for this graph comes from the silver_users and 
                     silver_sensors tables. A join of the tables is done in SQL 
@@ -283,7 +235,8 @@ app.layout = html.Div(
                     burned per day by female patients is in the 40-44 year olds
                     with height between 60-64 inches whereas for male patients it's in the 
                     50-54 year old range with height between 75-79 inches.
-                                                    """
+                                                    """,
+                                                    size="md",
                                                 ),
                                             ]
                                         ),
@@ -301,10 +254,10 @@ app.layout = html.Div(
                             [
                                 html.Div(
                                     [
-                                        html.Label("Select a specific user: "),
-                                        dcc.Dropdown(
+                                        dmc.Select(
                                             id="user-id",
-                                            options=userlist,
+                                            label="Select a specific user:",
+                                            data=userlist,
                                             value="1",
                                         ),
                                     ],
@@ -347,15 +300,18 @@ def make_line(yaxis, comp):
 
 @app.callback(
     Output("heat-fig", "figure"),
-    Input("heat-x", "value"),
-    Input("heat-y", "value"),
+    Input("heat-axes", "value"),
     Input("heat-fitness", "value"),
     Input("comparison", "value"),
     Input("slider-val", "value"),
 )
-def make_heat(xaxis, yaxis, fitness, comp, slider):
-    dfheat = dbx_utils.get_heat_data(xaxis, yaxis, fitness, comp, slider)
-    heatfig = chart_utils.generate_heat(dfheat, xaxis, yaxis, fitness, comp)
+def make_heat(axes, fitness, comp, slider):
+    if len(axes) == 2:
+        dfheat = dbx_utils.get_heat_data(axes[0], axes[1], fitness, comp, slider)
+        heatfig = chart_utils.generate_heat(dfheat, axes[0], axes[1], fitness, comp)
+    else:
+        img = io.imread("assets/no_show.png")
+        heatfig = px.imshow(img)
     return heatfig
 
 
