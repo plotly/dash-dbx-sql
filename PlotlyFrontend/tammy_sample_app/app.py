@@ -10,8 +10,7 @@ app.title = "dash-dbx"
 server = app.server  # expose server variable for Procfile
 
 users = dbx_utils.get_listofusers()
-userlist = [{"label": i, "value": i} for i in users["userid"]]
-
+userlist = [str(i) for i in users["userid"]]
 
 app.layout = html.Div(
     [
