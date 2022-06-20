@@ -13,9 +13,9 @@ This library allows Plotly Dash apps to very quickly run AND retrieve results of
 - to simplify back-end architectures and costs to accommodate use cases such as the above (e.g. avoiding external caching architecture work-arounds)
 - to allow Databricks users (highly technical BI engineers, data scientists, data engineers) to easily develop simple through to sophisticated interactive data analytics and visualization web application experiences for which Dash is highly differentiated.
 
-As described in the Databricks technical integration document linked above, most of the environment variables used in the code snippets below can be found in the "Advanced Options > JDBC/ODBC" tab of your Databricks cluster.
+As described in the Databricks technical integration document linked above, most of the environment variables used in the code snippets (see utils folder) can be found in the "Advanced Options > JDBC/ODBC" tab of your Databricks cluster.
 
-In this first of three examples (see utils folder), data is returned as a PyArrow table, which can be well-suited for retrieving large volumes of data. [NOTE: If necessary, this table can be converted to other formats, such as Pandas dataframes, Numpy arrays, or VAEX dataframes (also used for larger data volume workflows)].
+In this first of three examples, data is returned as a PyArrow table, which can be well-suited for retrieving large volumes of data. [NOTE: If necessary, this table can be converted to other formats, such as Pandas dataframes, Numpy arrays, or VAEX dataframes (also used for larger data volume workflows)].
 
 This data can then be consumed by Dash open-source components (including Plotly graphs) along with Dash Enterprise licensed capabilities (including Plotly’s DashBoard Engine) following a standard approach.
 
