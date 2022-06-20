@@ -18,3 +18,5 @@ As described in the Databricks technical integration document linked above, most
 In this first of three examples (see utils folder), data is returned as a PyArrow table, which can be well-suited for retrieving large volumes of data. [NOTE: If necessary, this table can be converted to other formats, such as Pandas dataframes, Numpy arrays, or VAEX dataframes (also used for larger data volume workflows)].
 
 This data can then be consumed by Dash open-source components (including Plotly graphs) along with Dash Enterprise licensed capabilities (including Plotly’s DashBoard Engine) following a standard approach.
+
+NOTE: A sample app (app.py) demonstrating some of these capabiliities has been deployed to https://dash-services.plotly.host/dash-dbx-sql/
