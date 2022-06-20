@@ -19,4 +19,4 @@ In this first of three examples (see utils folder), data is returned as a PyArro
 
 This data can then be consumed by Dash open-source components (including Plotly graphs) along with Dash Enterprise licensed capabilities (including Plotly’s DashBoard Engine) following a standard approach.
 
-NOTE: A sample app (app.py) demonstrating some of these capabiliities has been deployed to https://dash-services.plotly.host/dash-dbx-sql/
+NB: The sample app (app.py) demonstrating these capabiliities is deployed to https://dash-services.plotly.host/dash-dbx-sql/
