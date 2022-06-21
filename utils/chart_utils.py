@@ -1,5 +1,6 @@
 import plotly.express as px
 import numpy as np
+import dash_mantine_components as dmc
 
 
 def generate_scatter(df, xaxis, comp):
@@ -83,3 +84,39 @@ def generate_heat(df, axis1, axis2, fitness, comp):
         },
     )
     return heat
+
+
+def generate_userline(df, yaxis, user):
+    axis_labels = {
+        "calories_burnt": "Calories Burned Daily",
+        "miles_walked": "Miles Walked Daily",
+        "num_steps": "Total Daily Steps",
+    }
+    line = px.line(
+        df,
+        x="date",
+        y=f"{yaxis}",
+        markers=True,
+        labels={f"{yaxis}": axis_labels[yaxis]},
+        title=f"{axis_labels[yaxis]} for user with ID: {user}",
+    )
+    return line
+
+
+def generate_usercomp(df, user, fitness):
+    useridx = df.index[df["user_id"] == int(user)].to_list()[0]
+    num_pat = len(df)
+    if useridx == 0:
+        usercomp = dmc.Text(
+            f"Of the {num_pat} patients in the study, Patient {user} had the lowest total {fitness.lower()}"
+        )
+    elif useridx == num_pat - 1:
+        usercomp = dmc.Text(
+            f"Of the {num_pat} patients in the study, Patient {user} had the highest total {fitness.lower()}"
+        )
+    else:
+        percentile = round((useridx + 1) / num_pat * 100, 2)
+        usercomp = dmc.Text(
+            f"Patient {user} had higher total {fitness.lower()} than {percentile}% of the {num_pat} patients in the study"
+        )
+    return usercomp
