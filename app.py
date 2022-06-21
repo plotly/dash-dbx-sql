@@ -315,7 +315,7 @@ def make_userpage(userid, fitness):
             f"Patient {userid} Blood Pressure Level: {dfuserdemo['bloodpressure'][0]}"
         ),
     ]
-    userfig = chart_utils.generate_userline(dfuserfit, fitness, userid)
+    userfig = chart_utils.generate_userbar(dfuserfit, fitness, userid)
     dfusercomp = dbx_utils.get_user_comp(fitness)
     usercomp = chart_utils.generate_usercomp(dfusercomp, userid, fitness)
     return user_demo, userfig, usercomp

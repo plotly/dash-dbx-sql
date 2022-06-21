@@ -86,19 +86,19 @@ def generate_heat(df, axis1, axis2, fitness, comp):
     return heat
 
 
-def generate_userline(df, yaxis, user):
+def generate_userbar(df, yaxis, user):
     axis_labels = {
         "calories_burnt": "Calories Burned Daily",
         "miles_walked": "Miles Walked Daily",
         "num_steps": "Total Daily Steps",
     }
-    line = px.line(
+    line = px.bar(
         df,
         x="date",
         y=f"{yaxis}",
-        markers=True,
         labels={f"{yaxis}": axis_labels[yaxis]},
         title=f"{axis_labels[yaxis]} for user with ID: {user}",
+        text_auto=True,
     )
     return line
 
