@@ -32,7 +32,7 @@ value STRING
 )
 USING DELTA 
 TBLPROPERTIES("delta.targetFileSize"="128mb")
---LOCATION s3://<path>/
+--LOCATION s3://<path>/;
 
 -- COMMAND ----------
 
@@ -54,6 +54,7 @@ update_timestamp TIMESTAMP
 USING DELTA 
 TBLPROPERTIES("delta.targetFileSize"="128mb")
 --LOCATION s3://<path>/
+;
 
 -- COMMAND ----------
 
@@ -72,7 +73,7 @@ value AS value
 FROM "/databricks-datasets/iot-stream/data-device/")
 FILEFORMAT = json
 COPY_OPTIONS('force'='true') --option to be incremental or always load all files
-
+;
 
 -- COMMAND ----------
 
@@ -92,6 +93,7 @@ value STRING
 USING DELTA 
 TBLPROPERTIES("delta.targetFileSize"="128mb")
 --LOCATION s3://<path>/
+;
 
 -- COMMAND ----------
 
@@ -123,7 +125,7 @@ TRUNCATE TABLE plotly_iot_dashboard.bronze_sensors;
 -- COMMAND ----------
 
 -- DBTITLE 1,Table Optimizations
-OPTIMIZE plotly_iot_dashboard.silver_sensors ZORDER BY (user_id, device_id, timestamp)
+OPTIMIZE plotly_iot_dashboard.silver_sensors ZORDER BY (user_id, device_id, timestamp);
 
 -- COMMAND ----------
 
@@ -152,7 +154,7 @@ FROM "/databricks-datasets/iot-stream/data-user/")
 FILEFORMAT = CSV
 FORMAT_OPTIONS('header'='true')
 COPY_OPTIONS('force'='true') --option to be incremental or always load all files
-
+;
 
 -- COMMAND ----------
 
@@ -174,6 +176,7 @@ update_timestamp TIMESTAMP
 USING DELTA 
 TBLPROPERTIES("delta.targetFileSize"="128mb")
 --LOCATION s3://<path>/
+;
 
 -- COMMAND ----------
 
