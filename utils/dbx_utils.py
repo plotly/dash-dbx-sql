@@ -15,7 +15,7 @@ USER_TABLE = "silver_users"
 DEVICE_TABLE = "silver_sensors"
 
 
-def get_user_data(user):
+def get_user_data(user, fitness):
     """
     Fetches user data for a specific user id from silver_users table, returns it as a pandas dataframe
 
@@ -31,24 +31,40 @@ def get_user_data(user):
     )
     cursor = connection.cursor()
     cursor.execute(
-        f"""SELECT * 
+        f"""SELECT *
             FROM(
                 SELECT
                 CASE WHEN gender='F' THEN 'Female' ELSE 'Male' END AS sex, 
                 CASE WHEN smoker='N' THEN 'Non-smoker' ELSE 'Smoker' END AS Smoker,
-                cholestlevs AS cholesterol, bp AS bloodpressure,
-                num_steps, miles_walked, calories_burnt, timestamp, user_id
-                FROM {DB_NAME}.{DEVICE_TABLE}
-                LEFT JOIN {DB_NAME}.{USER_TABLE} ON {DEVICE_TABLE}.user_id = {USER_TABLE}.userid
+                cholestlevs AS cholesterol, bp AS bloodpressure, userid,
+                age, height, weight
+                FROM {DB_NAME}.{USER_TABLE}
             )
-            WHERE user_id = {user}
+            WHERE userid = {user}
             """
     )
-    df = cursor.fetchall_arrow()
-    df = df.to_pandas()
+    userdemodf = cursor.fetchall_arrow()
+    userdemodf = userdemodf.to_pandas()
+    cursor.close()
+    cursor = connection.cursor()
+    cursor.execute(
+        f"""SELECT date, SUM({fitness}) AS {fitness}
+            FROM(
+                SELECT
+                CAST({DEVICE_TABLE}.timestamp AS DATE) AS date,
+                num_steps, miles_walked, calories_burnt
+                FROM {DB_NAME}.{DEVICE_TABLE}
+                WHERE user_id = {user}
+            )
+            GROUP BY date
+            ORDER BY date
+            """
+    )
+    userfitdf = cursor.fetchall_arrow()
+    userfitdf = userfitdf.to_pandas()
     cursor.close()
     connection.close()
-    return df
+    return userdemodf, userfitdf
 
 
 def get_scatter_data(xaxis, comp):
@@ -67,13 +83,13 @@ def get_scatter_data(xaxis, comp):
     )
     cursor0 = connection0.cursor()
     cursor0.execute(
-        f"""SELECT {xaxis}, {comp}, risk, Count(*) AS Total 
+        f"""SELECT {xaxis}, {comp}, risk, Count(DISTINCT userid) AS Total 
             FROM(
                 SELECT
                 CASE WHEN gender='F' THEN 'Female' ELSE 'Male' END AS sex,
                 age, height, weight, 
                 CASE WHEN smoker='N' THEN 'Non-smoker' ELSE 'Smoker' END AS Smoker,
-                cholestlevs AS cholesterol, bp AS bloodpressure, risk
+                cholestlevs AS cholesterol, bp AS bloodpressure, risk, userid
                 FROM {DB_NAME}.{USER_TABLE}
             )
             GROUP BY {xaxis}, {comp}, risk
@@ -108,10 +124,11 @@ def get_line_data(yaxis, comp):
                 CASE WHEN gender='F' THEN 'Female' ELSE 'Male' END AS sex, 
                 CASE WHEN smoker='N' THEN 'Non-smoker' ELSE 'Smoker' END AS Smoker,
                 CAST({DEVICE_TABLE}.timestamp AS DATE) AS date,
-                cholestlevs AS cholesterol, bp AS bloodpressure,
-                num_steps, miles_walked, calories_burnt
+                cholestlevs AS cholesterol, bp AS bloodpressure, user_id,
+                SUM(num_steps) AS num_steps, SUM(miles_walked) AS miles_walked, SUM(calories_burnt) AS calories_burnt
                 FROM {DB_NAME}.{DEVICE_TABLE}
                 LEFT JOIN {DB_NAME}.{USER_TABLE} ON {DEVICE_TABLE}.user_id = {USER_TABLE}.userid
+                GROUP BY sex, Smoker, date, user_id, cholesterol, bloodpressure
             )
             GROUP BY date, {comp}
             ORDER BY date
@@ -146,11 +163,13 @@ def get_heat_data(axis1, axis2, fitness, comp, slider):
                 CASE WHEN gender='F' THEN 'Female' ELSE 'Male' END AS sex, 
                 CASE WHEN smoker='N' THEN 'Non-smoker' ELSE 'Smoker' END AS Smoker,
                 cholestlevs AS cholesterol, bp AS bloodpressure,
-                num_steps, miles_walked, calories_burnt, age, height, weight
+                SUM(num_steps) AS num_steps, SUM(miles_walked) AS miles_walked, SUM(calories_burnt) AS calories_burnt,
+                age, height, weight, user_id
                 FROM {DB_NAME}.{DEVICE_TABLE}
                 LEFT JOIN {DB_NAME}.{USER_TABLE} ON {DEVICE_TABLE}.user_id = {USER_TABLE}.userid
                 WHERE {fitness} BETWEEN ((SELECT MAX({fitness}) FROM {DB_NAME}.{DEVICE_TABLE})*{slider[0]}*0.01) 
                 AND ((SELECT MAX({fitness}) FROM {DB_NAME}.{DEVICE_TABLE})*{slider[1]}*0.01)
+                GROUP BY sex, Smoker, cholesterol, bloodpressure, user_id, age, height, weight
             )
             GROUP BY {comp}, {axis1}, {axis2}
             """
@@ -176,4 +195,31 @@ def get_listofusers():
     df = df.to_pandas()
     cursor3.close()
     connection3.close()
+    return df
+
+
+def get_user_comp(fitness):
+    connection4 = sql.connect(
+        server_hostname=SERVER_HOSTNAME,
+        http_path=HTTP_PATH,
+        access_token=ACCESS_TOKEN,
+    )
+    cursor4 = connection4.cursor()
+    cursor4.execute(
+        f"""SELECT user_id, {fitness}
+            FROM(
+                SELECT
+                SUM(num_steps) AS num_steps, SUM(miles_walked) AS miles_walked, SUM(calories_burnt) AS calories_burnt,
+                user_id
+                FROM {DB_NAME}.{DEVICE_TABLE}
+                LEFT JOIN {DB_NAME}.{USER_TABLE} ON {DEVICE_TABLE}.user_id = {USER_TABLE}.userid 
+                GROUP BY user_id
+            )
+            ORDER BY {fitness} ASC
+            """
+    )
+    df = cursor4.fetchall_arrow()
+    df = df.to_pandas()
+    cursor4.close()
+    connection4.close()
     return df

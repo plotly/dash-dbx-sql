@@ -55,27 +55,26 @@ app.layout = html.Div(
                                     },
                                 ),
                                 dmc.Col(
-                                    html.Div(
-                                        [
-                                            html.Label("Select the x axis category: "),
-                                            dmc.RadioGroup(
-                                                id="scatter-x",
-                                                data=[
-                                                    {"label": "Age", "value": "age"},
-                                                    {
-                                                        "label": "Height",
-                                                        "value": "height",
-                                                    },
-                                                    {
-                                                        "label": "Weight",
-                                                        "value": "weight",
-                                                    },
-                                                ],
-                                                value="age",
-                                            ),
-                                            dcc.Graph(id="demographics"),
-                                            dmc.Text(
-                                                """
+                                    [
+                                        html.Label("Select the x axis category: "),
+                                        dmc.RadioGroup(
+                                            id="scatter-x",
+                                            data=[
+                                                {"label": "Age", "value": "age"},
+                                                {
+                                                    "label": "Height",
+                                                    "value": "height",
+                                                },
+                                                {
+                                                    "label": "Weight",
+                                                    "value": "weight",
+                                                },
+                                            ],
+                                            value="age",
+                                        ),
+                                        dcc.Graph(id="demographics"),
+                                        dmc.Text(
+                                            """
             The data used for this graph comes from the silver_users table
             which contains patient demographic data. A "group by" and "count" 
             aggregation combo are implemented via SQL statement. The columns 
@@ -87,41 +86,39 @@ app.layout = html.Div(
             values is also pulled. The calculation happens in Databricks and data 
             is re-queried when the user changes either the x axis category or 
             comparison category.
-                                                """,
-                                                size="md",
-                                            ),
-                                        ],
-                                    ),
+                                            """,
+                                            size="md",
+                                        ),
+                                    ],
                                     span=6,
                                     style={
                                         "border": f"2px solid {dmc.theme.DEFAULT_COLORS['indigo'][4]}",
                                     },
                                 ),
                                 dmc.Col(
-                                    html.Div(
-                                        [
-                                            dmc.RadioGroup(
-                                                id="line-y",
-                                                label="Select the y axis category:",
-                                                data=[
-                                                    {
-                                                        "label": "Calories Burned",
-                                                        "value": "calories_burnt",
-                                                    },
-                                                    {
-                                                        "label": "Miles Walked",
-                                                        "value": "miles_walked",
-                                                    },
-                                                    {
-                                                        "label": "Number of Steps",
-                                                        "value": "num_steps",
-                                                    },
-                                                ],
-                                                value="calories_burnt",
-                                            ),
-                                            dcc.Graph(id="fitness-line"),
-                                            dmc.Text(
-                                                """
+                                    [
+                                        dmc.RadioGroup(
+                                            id="line-y",
+                                            label="Select the y axis category:",
+                                            data=[
+                                                {
+                                                    "label": "Calories Burned",
+                                                    "value": "calories_burnt",
+                                                },
+                                                {
+                                                    "label": "Miles Walked",
+                                                    "value": "miles_walked",
+                                                },
+                                                {
+                                                    "label": "Number of Steps",
+                                                    "value": "num_steps",
+                                                },
+                                            ],
+                                            value="calories_burnt",
+                                        ),
+                                        dcc.Graph(id="fitness-line"),
+                                        dmc.Text(
+                                            """
             The data used for this graph comes from the silver_users and 
             silver_sensors tables. A join of the tables is done in SQL
             wherein the sensor data is matched to the demographic data for 
@@ -131,11 +128,10 @@ app.layout = html.Div(
             query is used to pull the data for a user-specified fitness metric, 
             averaged by specified demographic group broken down by comparison 
             category, per day.
-                                                """,
-                                                size="md",
-                                            ),
-                                        ],
-                                    ),
+                                            """,
+                                            size="md",
+                                        ),
+                                    ],
                                     span=6,
                                     style={
                                         "border": f"2px solid {dmc.theme.DEFAULT_COLORS['indigo'][4]}",
@@ -159,52 +155,44 @@ app.layout = html.Div(
                                             maxSelectedValues=2,
                                         ),
                                     ],
-                                    span=4,
+                                    span=3,
                                 ),
                                 dmc.Col(
                                     [
-                                        html.Div(
-                                            [
-                                                dmc.RadioGroup(
-                                                    id="heat-fitness",
-                                                    label="Select the fitness metric:",
-                                                    data=[
-                                                        {
-                                                            "label": "Calories Burned",
-                                                            "value": "calories_burnt",
-                                                        },
-                                                        {
-                                                            "label": "Miles Walked",
-                                                            "value": "miles_walked",
-                                                        },
-                                                        {
-                                                            "label": "Number of Steps",
-                                                            "value": "num_steps",
-                                                        },
-                                                    ],
-                                                    value="calories_burnt",
-                                                ),
-                                            ]
-                                        )
+                                        dmc.RadioGroup(
+                                            id="heat-fitness",
+                                            label="Select the fitness metric:",
+                                            data=[
+                                                {
+                                                    "label": "Calories Burned",
+                                                    "value": "calories_burnt",
+                                                },
+                                                {
+                                                    "label": "Miles Walked",
+                                                    "value": "miles_walked",
+                                                },
+                                                {
+                                                    "label": "Number of Steps",
+                                                    "value": "num_steps",
+                                                },
+                                            ],
+                                            value="calories_burnt",
+                                        ),
                                     ],
-                                    span=4,
+                                    span=5,
                                 ),
                                 dmc.Col(
                                     [
-                                        html.Div(
-                                            [
-                                                html.Label(
-                                                    "Select the fitness metric percentile range: "
-                                                ),
-                                                dcc.RangeSlider(
-                                                    id="slider-val",
-                                                    min=1,
-                                                    max=100,
-                                                    step=None,
-                                                    value=[1, 100],
-                                                ),
-                                            ]
-                                        )
+                                        html.Label(
+                                            "Select the fitness metric percentile range: "
+                                        ),
+                                        dcc.RangeSlider(
+                                            id="slider-val",
+                                            min=1,
+                                            max=100,
+                                            step=None,
+                                            value=[1, 100],
+                                        ),
                                     ],
                                     span=4,
                                 ),
@@ -215,11 +203,9 @@ app.layout = html.Div(
                             [
                                 dmc.Col(
                                     [
-                                        html.Div(
-                                            [
-                                                dcc.Graph(id="heat-fig"),
-                                                dmc.Text(
-                                                    """
+                                        dcc.Graph(id="heat-fig"),
+                                        dmc.Text(
+                                            """
                     The data used for this graph comes from the silver_users and 
                     silver_sensors tables. A join of the tables is done in SQL 
                     wherein the sensor data is matched to the demographic data for 
@@ -233,12 +219,10 @@ app.layout = html.Div(
                     categories (x and y axis), one graph per comparison category. For 
                     example, when looking at age and height, the highest average calories 
                     burned per day by female patients is in the 40-44 year olds
-                    with height between 60-64 inches whereas for male patients it's in the 
-                    50-54 year old range with height between 75-79 inches.
-                                                    """,
-                                                    size="md",
-                                                ),
-                                            ]
+                    with height between 55-59 inches whereas for male patients it's in the 
+                    30-34 year old range with height between 65-69 inches.
+                                            """,
+                                            size="md",
                                         ),
                                     ],
                                     span=12,
@@ -252,7 +236,7 @@ app.layout = html.Div(
                     children=[
                         dmc.Grid(
                             [
-                                html.Div(
+                                dmc.Col(
                                     [
                                         dmc.Select(
                                             id="user-id",
@@ -261,8 +245,45 @@ app.layout = html.Div(
                                             value="1",
                                         ),
                                     ],
-                                    style={"width": "60%", "text-align": "center"},
+                                    span=5,
                                 ),
+                                dmc.Col(
+                                    dmc.RadioGroup(
+                                        id="user-fit",
+                                        label="Select the fitness metric:",
+                                        data=[
+                                            {
+                                                "label": "Calories Burned",
+                                                "value": "calories_burnt",
+                                            },
+                                            {
+                                                "label": "Miles Walked",
+                                                "value": "miles_walked",
+                                            },
+                                            {
+                                                "label": "Number of Steps",
+                                                "value": "num_steps",
+                                            },
+                                        ],
+                                        value="calories_burnt",
+                                    ),
+                                    span=5,
+                                ),
+                                dmc.Col(
+                                    id="user-demo",
+                                    span=5,
+                                    style={
+                                        "border": f"2px solid {dmc.theme.DEFAULT_COLORS['indigo'][4]}",
+                                    },
+                                ),
+                                dmc.Col(
+                                    id="user-comp",
+                                    span=5,
+                                    style={
+                                        "border": f"2px solid {dmc.theme.DEFAULT_COLORS['indigo'][4]}",
+                                    },
+                                ),
+                                dmc.Col(dcc.Graph(id="user-metrics-fig"), span=10),
                             ],
                             justify="center",
                             gutter="xl",
@@ -274,6 +295,30 @@ app.layout = html.Div(
         ),
     ],
 )
+
+
+@app.callback(
+    Output("user-demo", "children"),
+    Output("user-metrics-fig", "figure"),
+    Output("user-comp", "children"),
+    Input("user-id", "value"),
+    Input("user-fit", "value"),
+)
+def make_userpage(userid, fitness):
+    dfuserdemo, dfuserfit = dbx_utils.get_user_data(int(userid), fitness)
+    user_demo = [
+        dmc.Text(
+            f"Patient {userid} is a {dfuserdemo['age'][0]} year old, {dfuserdemo['weight'][0]} lbs {dfuserdemo['sex'][0].lower()}, {dfuserdemo['Smoker'][0].lower()}"
+        ),
+        dmc.Text(f"Patient {userid} Cholesterol Level: {dfuserdemo['cholesterol'][0]}"),
+        dmc.Text(
+            f"Patient {userid} Blood Pressure Level: {dfuserdemo['bloodpressure'][0]}"
+        ),
+    ]
+    userfig = chart_utils.generate_userbar(dfuserfit, fitness, userid)
+    dfusercomp = dbx_utils.get_user_comp(fitness)
+    usercomp = chart_utils.generate_usercomp(dfusercomp, userid, fitness)
+    return user_demo, userfig, usercomp
 
 
 @app.callback(
