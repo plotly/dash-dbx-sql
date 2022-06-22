@@ -52,7 +52,7 @@ def get_user_data(user, fitness):
             FROM(
                 SELECT
                 CAST({DEVICE_TABLE}.timestamp AS DATE) AS date,
-                num_steps, miles_walked, calories_burnt
+                num_steps*0.00035 AS num_steps, miles_walked*0.0003 AS miles_walked, calories_burnt*0.002 AS calories_burnt
                 FROM {DB_NAME}.{DEVICE_TABLE}
                 WHERE user_id = {user}
             )
@@ -125,7 +125,7 @@ def get_line_data(yaxis, comp):
                 CASE WHEN smoker='N' THEN 'Non-smoker' ELSE 'Smoker' END AS Smoker,
                 CAST({DEVICE_TABLE}.timestamp AS DATE) AS date,
                 cholestlevs AS cholesterol, bp AS bloodpressure, user_id,
-                SUM(num_steps) AS num_steps, SUM(miles_walked) AS miles_walked, SUM(calories_burnt) AS calories_burnt
+                SUM(num_steps*0.00035) AS num_steps, SUM(miles_walked*0.0003) AS miles_walked, SUM(calories_burnt*0.002) AS calories_burnt
                 FROM {DB_NAME}.{DEVICE_TABLE}
                 LEFT JOIN {DB_NAME}.{USER_TABLE} ON {DEVICE_TABLE}.user_id = {USER_TABLE}.userid
                 GROUP BY sex, Smoker, date, user_id, cholesterol, bloodpressure
@@ -163,7 +163,7 @@ def get_heat_data(axis1, axis2, fitness, comp, slider):
                 CASE WHEN gender='F' THEN 'Female' ELSE 'Male' END AS sex, 
                 CASE WHEN smoker='N' THEN 'Non-smoker' ELSE 'Smoker' END AS Smoker,
                 cholestlevs AS cholesterol, bp AS bloodpressure,
-                SUM(num_steps) AS num_steps, SUM(miles_walked) AS miles_walked, SUM(calories_burnt) AS calories_burnt,
+                SUM(num_steps*0.00035) AS num_steps, SUM(miles_walked*0.0003) AS miles_walked, SUM(calories_burnt*0.002) AS calories_burnt,
                 age, height, weight, user_id
                 FROM {DB_NAME}.{DEVICE_TABLE}
                 LEFT JOIN {DB_NAME}.{USER_TABLE} ON {DEVICE_TABLE}.user_id = {USER_TABLE}.userid
@@ -209,7 +209,7 @@ def get_user_comp(fitness):
         f"""SELECT user_id, {fitness}
             FROM(
                 SELECT
-                SUM(num_steps) AS num_steps, SUM(miles_walked) AS miles_walked, SUM(calories_burnt) AS calories_burnt,
+                SUM(num_steps*0.00035) AS num_steps, SUM(miles_walked*0.0003) AS miles_walked, SUM(calories_burnt*0.002) AS calories_burnt,
                 user_id
                 FROM {DB_NAME}.{DEVICE_TABLE}
                 LEFT JOIN {DB_NAME}.{USER_TABLE} ON {DEVICE_TABLE}.user_id = {USER_TABLE}.userid 
