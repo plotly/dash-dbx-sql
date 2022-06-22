@@ -32,7 +32,8 @@ value STRING
 )
 USING DELTA 
 TBLPROPERTIES("delta.targetFileSize"="128mb")
---LOCATION s3://<path>/;
+--LOCATION s3://<path>/
+;
 
 -- COMMAND ----------
 
