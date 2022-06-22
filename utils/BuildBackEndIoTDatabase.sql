@@ -13,6 +13,7 @@
 
 -- COMMAND ----------
 
+DROP DATABASE IF EXISTS plotly_iot_dashboard CASCADE;
 CREATE DATABASE IF NOT EXISTS plotly_iot_dashboard;
 USE plotly_iot_dashboard;
 
@@ -26,8 +27,7 @@ user_id INT,
 calories_burnt DECIMAL(10,2), 
 miles_walked DECIMAL(10,2), 
 num_steps DECIMAL(10,2), 
-timestamp TIMESTAMP, 
-input_file_name STRING, 
+timestamp TIMESTAMP,
 value STRING
 )
 USING DELTA 
@@ -49,7 +49,6 @@ familyhistory STRING,
 cholestlevs STRING,
 bp STRING,
 risk DECIMAL(10,2),
-input_file_name STRING,
 update_timestamp TIMESTAMP
 )
 USING DELTA 
@@ -68,8 +67,7 @@ user_id::integer AS user_id,
 calories_burnt::decimal(10,2) AS calories_burnt, 
 miles_walked::decimal(10,2) AS miles_walked, 
 num_steps::decimal(10,2) AS num_steps, 
-timestamp::timestamp AS timestamp, 
-input_file_name() AS input_file_name, 
+timestamp::timestamp AS timestamp,
 value AS value
 FROM "/databricks-datasets/iot-stream/data-device/")
 FILEFORMAT = json
@@ -87,8 +85,7 @@ user_id INT,
 calories_burnt DECIMAL(10,2), 
 miles_walked DECIMAL(10,2), 
 num_steps DECIMAL(10,2), 
-timestamp TIMESTAMP, 
-input_file_name STRING, 
+timestamp TIMESTAMP,
 value STRING
 )
 USING DELTA 
@@ -107,7 +104,6 @@ USING (SELECT Id::integer,
               miles_walked::decimal,
               num_steps::decimal,
               timestamp::timestamp,
-              input_file_name::string,
               value::string
               FROM plotly_iot_dashboard.bronze_sensors) AS source
 ON source.Id = target.Id
@@ -149,7 +145,6 @@ familyhistory AS familyhistory,
 cholestlevs AS cholestlevs,
 bp AS bp,
 risk::decimal(10,2) AS risk,
-input_file_name() AS input_file_name,
 current_timestamp() AS update_timestamp
 FROM "/databricks-datasets/iot-stream/data-user/")
 FILEFORMAT = CSV
@@ -171,7 +166,6 @@ familyhistory STRING,
 cholestlevs STRING,
 bp STRING,
 risk DECIMAL(10,2),
-input_file_name STRING,
 update_timestamp TIMESTAMP
 )
 USING DELTA 
@@ -193,7 +187,6 @@ USING (SELECT
       cholestlevs,
       bp,
       risk,
-      input_file_name,
       update_timestamp
       FROM plotly_iot_dashboard.bronze_users) AS source
 ON source.userid = target.userid
@@ -207,7 +200,6 @@ WHEN MATCHED THEN UPDATE SET
       target.cholestlevs = source.cholestlevs,
       target.bp = source.bp,
       target.risk = source.risk,
-      target.input_file_name = source.input_file_name,
       target.update_timestamp = source.update_timestamp
 WHEN NOT MATCHED THEN INSERT *;
 
