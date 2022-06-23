@@ -25,6 +25,7 @@ def generate_scatter(df, xaxis, comp):
         labels={xaxis: axis_labels[xaxis]},
         title=f"Comparative Risk by Demographic",
     )
+    scatter.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7")
     return scatter
 
 
@@ -50,6 +51,7 @@ def generate_line(df, yaxis, comp):
         labels={f"{yaxis}tot": axis_labels[yaxis]},
         title=f"Comparative Daily Fitness Metrics by Demographic",
     )
+    line.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7")
     return line
 
 
@@ -83,6 +85,7 @@ def generate_heat(df, axis1, axis2, fitness, comp):
             comp: axis_labels[comp],
         },
     )
+    heat.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7")
     return heat
 
 
@@ -100,6 +103,7 @@ def generate_userbar(df, yaxis, user):
         title=f"{axis_labels[yaxis]} for user with ID: {user}",
         text_auto=True,
     )
+    line.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7",)
     return line
 
 
