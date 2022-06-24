@@ -1,4 +1,4 @@
-# Databricks as a Data Warehouse via DBXSQL and Plotly Dash
+# Building Plotly Dash Apps on a Lakehouse with Databricks SQL
 
 ## Overview
 
