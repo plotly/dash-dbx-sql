@@ -10,7 +10,7 @@ Hannah Ker
 
    with special contributions from Daniel Anton Suchy & Tammy Do
 
-#Links
+# Links
 Medium Article @ https://plotlygraphs.medium.com/b9761c201717
 
 Plotly Dash App @ https://dash-demo.plotly.host/dash-dbx-sql/
