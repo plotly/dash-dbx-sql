@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv() # loads environment variables from .env file
+load_dotenv()  # loads environment variables from .env file
 
 ## Database
 DB_NAME = "plotly_iot_dashboard"
@@ -12,47 +12,44 @@ SERVER_HOSTNAME = os.getenv("SERVER_HOSTNAME")
 HTTP_PATH = os.getenv("HTTP_PATH")
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 
-## Other 
+## Other
 
 app_description = {
-    "headers": ["Databricks as a Data Warehouse", "Fast Query, Computation, & Retrieval of Databricks Data", "Gateway to Sophisticated Data Science"],
-    "texts": ["for simple to advanced python analytical workflows", "at scale via Plotly Dash analytical web applications", "for simple to advanced python analytical workflows"]
-} 
-demographics_data_dict = {
     "headers": [
-        "Data Source",
-        "Data Acquisition",
-        "Query"
+        "Databricks as a Data Warehouse",
+        "Fast Query, Computation, & Retrieval of Databricks Data",
+        "Gateway to Sophisticated Data Science",
     ],
+    "texts": [
+        "for simple to advanced python analytical workflows",
+        "at scale via Plotly Dash analytical web applications",
+        "for simple to advanced python analytical workflows",
+    ],
+}
+demographics_data_dict = {
+    "headers": ["Data Source", "Data Acquisition", "Query"],
     "texts": [
         "'silver_users' table inside Serverless Databricks SQL database",
         "Every time user interacts with the filters on the page, Dash talks to the database",
-        "This query COUTNs results from a GROUP BY query, which depnding on filters looks can group by height, sex, and risk"
-    ]
-} 
+        "This query COUNTS results from a GROUP BY query, which depnding on filters looks can group by height, sex, and risk",
+    ],
+}
 
 fitness_data_dict = {
-    "headers": [
-        "Data Source",
-        "Query"
-    ],
+    "headers": ["Data Source", "Query"],
     "texts": [
         "'silver_users' and 'silver_sensors' tables which hold user and wearable devices information respectively",
         "JOIN the two tables on the user_id column. This query pulls the data for a user-specified fitness metric, averaged by specified demographic group broken down BY comparison category, per day",
-    ]
-} 
+    ],
+}
 
 heatmap_data_dict = {
-    "headers": [
-        "Data Source",
-        "Query"
-    ],
+    "headers": ["Data Source", "Query"],
     "texts": [
-        "'silver_users' and 'silver_sensors' tables",        
+        "'silver_users' and 'silver_sensors' tables",
         "JOIN the two tables on the user_id column. This query pulls the data WHERE it filters by user-specified comparison categories, BETWEEN performance percentile, and then averages the result for each demographic group",
-
-    ]
-} 
+    ],
+}
 
 
 custom_color = {

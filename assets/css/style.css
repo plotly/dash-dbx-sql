@@ -308,3 +308,8 @@ body {
     color: #7A76FF;
     background-position: 0%;
 }  
+
+/* Patient selector control */
+.mantine-SegmentedControl-root {
+    overflow-x: scroll;
+}
