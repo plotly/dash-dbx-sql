@@ -1,5 +1,13 @@
-from constants import SERVER_HOSTNAME, HTTP_PATH, ACCESS_TOKEN, DB_NAME, USER_TABLE, DEVICE_TABLE
+from constants import (
+    SERVER_HOSTNAME,
+    HTTP_PATH,
+    ACCESS_TOKEN,
+    DB_NAME,
+    USER_TABLE,
+    DEVICE_TABLE,
+)
 from databricks import sql
+
 
 def get_user_data(user, fitness):
     """

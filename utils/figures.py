@@ -1,19 +1,30 @@
 import plotly.express as px
 from constants import custom_color
 
+
 def fig_style(fig):
-    return fig.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7").update_xaxes(gridcolor='#3F3F3F').update_yaxes(gridcolor='#3F3F3F')
+    return (
+        fig.update_layout(
+            paper_bgcolor="#1c2022", plot_bgcolor="#1c2022", font_color="#A3AAB7"
+        )
+        .update_xaxes(gridcolor="#3F3F3F")
+        .update_yaxes(gridcolor="#3F3F3F")
+    )
+
 
 def create_empty(text):
-    layout = dict( 
-        autosize=True, 
-        annotations=[dict(text=text, showarrow=False)], 
-        paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7", 
+    layout = dict(
+        autosize=True,
+        annotations=[dict(text=text, showarrow=False)],
+        paper_bgcolor="#1c2022",
+        plot_bgcolor="#1c2022",
+        font_color="#A3AAB7",
         font=dict(color="FFFF", size=20),
         xaxis=dict(showgrid=False, zeroline=False, visible=False),
         yaxis=dict(showgrid=False, zeroline=False, visible=False),
-    ) 
+    )
     return {"data": [], "layout": layout}
+
 
 def generate_scatter(df, xaxis, comp):
     axis_labels = {
@@ -68,7 +79,14 @@ def generate_heat(df, axis1, axis2, fitness, comp):
     }
     bin_sizes = {"age": 10, "height": 5, "weight": 20}
 
-    colorscale= ["#1d2022","#330e09", "#651c12","#a72e1e","#db4c39", "#e7887b"] # "#1d2022","#44201a","#5d221b","#74261d","#892b21","#9e3226","#b3392b","#c74232","#db4c39"
+    colorscale = [
+        "#1d2022",
+        "#330e09",
+        "#651c12",
+        "#a72e1e",
+        "#db4c39",
+        "#e7887b",
+    ]  # "#1d2022","#44201a","#5d221b","#74261d","#892b21","#9e3226","#b3392b","#c74232","#db4c39"
     fig = px.density_heatmap(
         df,
         x=axis1,
@@ -103,5 +121,5 @@ def generate_userbar(df, yaxis, user):
         title=f"{axis_labels[yaxis]} for patient {user}",
         text_auto=True,
     )
-    fig.update_traces(marker_color='#972a1b')
+    fig.update_traces(marker_color="#972a1b")
     return fig_style(fig)
