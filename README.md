@@ -2,14 +2,15 @@
 
 Plotly on Databricks Blog Series — Article #1 (June/22)
 
-Authors: 
+# Authors 
 Cody Austin Davis
  (Solutions Architect, Databricks), 
 Hannah Ker
  (Solutions Architect, Plotly) 
 
-with special contributions from Daniel Anton Suchy & Tammy Do
+   with special contributions from Daniel Anton Suchy & Tammy Do
 
+#Links
 Medium Article @ https://plotlygraphs.medium.com/b9761c201717
 
 Plotly Dash App @ https://dash-demo.plotly.host/dash-dbx-sql/
