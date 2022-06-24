@@ -31,7 +31,7 @@ demographics_data_dict = {
     "texts": [
         "'silver_users' table inside Serverless Databricks SQL database",
         "Every time user interacts with the filters on the page, Dash talks to the database",
-        "This query COUNTS results from a GROUP BY query, which depnding on filters looks can group by height, sex, and risk",
+        "This query COUNTS results from a GROUP BY query, which depending on filters looks can group by height, sex, and risk",
     ],
 }
 
