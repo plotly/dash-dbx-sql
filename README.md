@@ -7,9 +7,11 @@ Cody Austin Davis
  (Solutions Architect, Databricks), 
 Hannah Ker
  (Solutions Architect, Plotly) 
+
 with special contributions from Daniel Anton Suchy & Tammy Do
 
 Medium Article @ https://plotlygraphs.medium.com/b9761c201717
+
 Plotly Dash App @ https://dash-demo.plotly.host/dash-dbx-sql/
 
 ## Overview
