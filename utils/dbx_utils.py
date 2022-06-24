@@ -1,19 +1,5 @@
+from constants import SERVER_HOSTNAME, HTTP_PATH, ACCESS_TOKEN, DB_NAME, USER_TABLE, DEVICE_TABLE
 from databricks import sql
-from dotenv import load_dotenv
-import os
-import numpy as np
-import pandas as pd
-
-load_dotenv()
-
-SERVER_HOSTNAME = os.getenv("SERVER_HOSTNAME")
-HTTP_PATH = os.getenv("HTTP_PATH")
-ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-
-DB_NAME = "plotly_iot_dashboard"
-USER_TABLE = "silver_users"
-DEVICE_TABLE = "silver_sensors"
-
 
 def get_user_data(user, fitness):
     """
@@ -181,7 +167,7 @@ def get_heat_data(axis1, axis2, fitness, comp, slider):
     return df
 
 
-def get_listofusers():
+def get_listofusers(dash_prepare=False):
     connection3 = sql.connect(
         server_hostname=SERVER_HOSTNAME,
         http_path=HTTP_PATH,
@@ -195,6 +181,8 @@ def get_listofusers():
     df = df.to_pandas()
     cursor3.close()
     connection3.close()
+    if dash_prepare:
+        return [{"label": str(i), "value": str(i)} for i in df["userid"]]
     return df
 
 

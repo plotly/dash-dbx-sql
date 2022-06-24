@@ -1,0 +1,310 @@
+
+/* ******** */
+/* left-tab */
+/* ******** */
+
+.left-tab .global-control {
+    padding: 2vh 0;
+}
+
+
+/* ********* */
+/* right tab */
+/* ********* */
+
+.user-demo-border {
+    border-right: 2px solid #DB4C39;
+    line-height: 2px;
+}
+
+#user-header {
+    padding-top: 2vh;
+}
+
+#user-id {
+    width: 100% !important;
+}
+
+/* *************** */
+/* Global settings */
+/* *************** */
+
+body {
+    margin: 0 !important;
+    background-color: #15171B;
+}
+
+/* tab body left-right padding */
+.mantine-Tabs-body {
+    padding: 0 5vw !important;
+}
+
+
+.card {
+    background-color: #1C1C20;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    margin: 15px;
+}
+
+.mantine-Col-root, .card-centre {
+    text-align: center !important;
+}
+
+.mantine-SegmentedControl-active {
+    background-color: #a92f1f !important;
+}
+.rc-slider-track {
+    
+    background-color: #a92f1f !important;
+}
+.rc-slider-handle, .rc-slider-dot-active  {
+    border-color: #ED8537 !important;
+}
+
+/* remove background from notification icon */
+.mantine-Notification-icon {
+    background-color: transparent !important;
+    margin-left: 16px;
+}
+
+
+/* ****** */
+/* Header */
+/* ****** */
+.header {
+    display: flex;
+    padding-top: 1vh;
+}
+
+.header .header-title {
+    font-size: 3vh;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: Open Sans, sans-serif;
+    display: inline-flex;
+}
+
+.header .subheader-title {
+    font-size: 1.5vh;
+}
+
+.header img {
+    max-height: 5vh;
+}
+
+
+.header-logos-left {
+    flex-grow: 4;
+    margin-left: 3vh;
+}
+.header-logos-right > img {
+    float: left;
+}
+
+
+.header-text-middle {
+    flex-grow: 4;
+    text-align: center;
+}
+
+
+.header-logos-right {
+    flex-grow: 4;
+}
+.header-logos-right > img {
+    float: right;
+    margin-right: 3vh;
+}
+
+.description {
+    text-align: center;
+    padding-bottom: 3vh;
+}
+.description h3 {
+    color: #DB4C39;
+}
+
+/* ********* */
+/* Card glow */
+/* ********* */
+
+.glow {
+    border: none;
+    outline: none;
+    /* cursor: pointer; */
+    position: relative;
+    z-index: 0;
+    border-radius: 2px;
+    color: var(--header_text);
+    overflow: visible;
+    margin:auto;
+    display:block;
+}
+
+.glow:before {
+    content: '';
+    background: linear-gradient(145deg, #ff2c6d , #7fe4ff, #ff2c6d , #7fe4ff, #ff2c6d , #7fe4ff, #ff2c6d , #7fe4ff, #ff2c6d , #7fe4ff);
+    position: absolute;
+    top: -2px;
+    left:-2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    animation: glowing 20s linear infinite;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    border-radius: 2px;
+}
+
+.glow:hover:before {
+    opacity: 1;
+    transition: 1.5s;
+}
+
+.glow:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    background-color: var(--control_background_color) !important;
+    height: 100%;
+    left: 0;
+    top: 0;
+    border-radius: 2px;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
+
+
+
+/* *********** */
+/* Column text */
+/* *********** */
+
+.text-columns {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: stretch;
+    margin-bottom: 1vh;
+    width: 100%
+}
+
+
+/* tooltip hover */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 10vh  !important;
+}
+
+.tooltip img {
+    /* width: 50%; */
+    /* height: 90%; */
+    max-width: 50%;
+    max-height: 8vh;
+    height: auto;
+    margin: 1% 0;
+    /* max-height: 5vh; */
+}
+
+.tooltip .tooltiptext {
+    background-color: #1c2022;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    
+    border-bottom: 1px solid #DB4C39;
+    border-left: 1px solid #DB4C39;
+    border-right: 1px solid #DB4C39;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 99;
+
+    /* fade in */
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s linear;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.4s linear;
+}
+
+
+.tooltip:hover {
+    background: linear-gradient(90deg, #DB4C39 50%, transparent 50%), linear-gradient(90deg, #DB4C39 50%, transparent 50%), linear-gradient(0deg, #DB4C39 50%, transparent 50%), linear-gradient(0deg, #DB4C39 50%, transparent 50%);
+    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+    background-size: 15px 2px, 15px 2px, 2px 15px, 2px 15px;
+    background-position: left top, right bottom, left bottom, right   top;
+    animation: fadeIn 1s, border-dance 4s infinite linear;
+    z-index: 99;
+}
+
+@keyframes fadeIn {
+
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes border-dance {
+    
+    0% {
+        background-position: left top, right bottom, left bottom, right   top;
+    }
+    100% {
+        background-position: left 15px top, right 15px bottom , left bottom 15px , right   top 15px;
+    }
+}
+
+
+
+
+
+/* Demo button css */
+.demo-button {
+    font-size: 1.5vh;
+    font-family: Open Sans,sans-serif;
+    text-decoration: none;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border-radius: 8px;
+    font-weight: 700;
+    -webkit-padding-start: 1rem;
+    padding-inline-start: 1rem;
+    -webkit-padding-end: 1rem;
+    padding-inline-end: 1rem;
+    color: #ffffff;
+    letter-spacing: 1.5px;
+    border: solid 1.5px transparent;
+    box-shadow: 2px 1000px 1px #0c0c0c inset;
+    background-image: linear-gradient(135deg, #7A76FF, #7A76FF, #7FE4FF);
+    -webkit-background-size: 200% 100%;
+    background-size: 200% 100%;
+    -webkit-background-position: 99%;
+    background-position: 99%;
+    background-origin: border-box;
+    transition: all .4s ease-in-out;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+}
+.demo-button:hover {
+    color: #7A76FF;
+    background-position: 0%;
+}  
