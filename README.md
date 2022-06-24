@@ -2,7 +2,7 @@
 
 Plotly on Databricks Blog Series — Article #1 (June/22)
 
-# Authors 
+## Authors 
 Cody Austin Davis
  (Solutions Architect, Databricks), 
 Hannah Ker
@@ -10,12 +10,12 @@ Hannah Ker
 
    with special contributions from Daniel Anton Suchy & Tammy Do
 
-# Links
+## Links
 Medium Article @ https://plotlygraphs.medium.com/b9761c201717
 
 Plotly Dash App @ https://dash-demo.plotly.host/dash-dbx-sql/
 
-## Overview
+# Overview
 
 Python developers who want to connect a Plotly Dash web app front end to a Databricks back end will be well-served by the Databricks SQL connector for Python, a specific form of the recently announced Databricks SQL capability.
 
