@@ -3,8 +3,13 @@ import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
 from utils import dbx_utils
-from constants import TEXT_DEMOGRAPHICS, TEXT_FITNESS_LINE, TEXT_HEAT_FIG
+from constants import demographics_data_dict, heatmap_data_dict, fitness_data_dict
 
+
+def create_text_columns(data_dict, class_name=None):
+    """ Create element that creates header + text column for every header and text in the list """
+    width = { "width": str(100 / len(data_dict["headers"])) + "%" } 
+    return html.Div([html.Div([html.H3(header), html.P(text)], style=width) for header, text in zip(data_dict["headers"], data_dict["texts"])], className="text-columns" + (f" {class_name}" if class_name else ""))
 
 def generate_usercomp(df, user, fitness):
     useridx = df.index[df["user_id"] == int(user)].to_list()[0]
@@ -20,7 +25,7 @@ def generate_usercomp(df, user, fitness):
     else:
         percentile = round((useridx + 1) / num_pat * 100, 2)
         usercomp = dmc.Text(
-            f"Patient {user} had higher total {fitness.lower()} than {percentile}% of the {num_pat} patients in the study"
+            f"Patient  had higher total {fitness.lower()} than {percentile}% of the {num_pat} patients in the study"
         )
     return usercomp
 
@@ -69,59 +74,67 @@ def notification_heatmap(text, action):
 
 def header(app, header_color, header, subheader=None, header_background_color="transparent"):
     
-    logo = html.Img(src=app.get_asset_url("images/databricks.png"))
-    databricks_logo = html.A(logo, href="https://databricks.com/", target="_blank", className="header-logos-left")
+    logo = html.Img(src=app.get_asset_url("images/plotly-logo-dark-theme.png"))
+    dash_logo = html.A(logo, href="https://plotly.com/dash/", target="_blank", className="header-logos-left")
 
     header = html.Div([
-            html.Div(header, className="header-title"),
+            html.Div([
+                html.Div("Dash", style={"color": "#7976F7"}),
+                html.Div(" with ", style={"padding": "0px 15px"}),
+                html.Div(" Databricks", style={"color": "#DB4C39"})
+            ], className="header-title"),
             html.Div(subheader, className="subheader-title"),
         ],
         style={"color": header_color},
         className="header-text-middle"
     )
 
-    logo = html.Img(src=app.get_asset_url("images/plotly-logo-dark-theme.png"))
-    dash_logo = html.A(logo, href="https://plotly.com/dash/", target="_blank", className="header-logos-right")
-
-
+    logo = html.Img(src=app.get_asset_url("images/databricks.png"))
+    databricks_logo = html.A(logo, href="https://databricks.com/", target="_blank", className="header-logos-right")
     
-    return html.Div([databricks_logo, header, dash_logo], className="header", style={"background-color": header_background_color})
+    return html.Div([dash_logo, header, databricks_logo], className="header", style={"background-color": header_background_color})
 
 
 LEFT_TAB = html.Div([
 
-    # GLOBAL CONTROL
-    dmc.Paper([
-        dmc.Select(
-            id="comparison",
-            # label="Select the color comparison category:",
-            value="sex",
-            data=[
-                {"label": "Sex", "value": "sex"},
-                {"label": "Smoker?", "value": "Smoker"},
-                {
-                    "label": "Cholesterol Level",
-                    "value": "cholesterol",
-                },
-                {
-                    "label": "Blood Pressure",
-                    "value": "bloodpressure",
-                },
-            ],
-        )
-    ], class_name="global-control"),
+    # CROSS FILTER 
+    dmc.Group(
+        direction="column",
+        position="center",
+        class_name="global-control",
+        children=[
+            dmc.Title("Query data by:"),
+            dmc.Chips(
+                id="comparison",
+                value="sex",
+                direction="row",
+                align="center",
+                variant="filled",
+                color="orange",
+                data=[
+                    {
+                        "label": "Blood Pressure",
+                        "value": "bloodpressure",
+                    },
+                    {"label": "Sex", "value": "sex"},
+                    {"label": "Smoker?", "value": "Smoker"},
+                    {
+                        "label": "Cholesterol Level",
+                        "value": "cholesterol",
+                    },
+                ],
+            )
+        ]
+    ),
 
     # TOP 2 FIGURES
     dmc.Grid(
-        justify="center",
         gutter="xl",
-        # style={"margin-bottom": 30, "margin-top": 30},
         children=[
 
             dmc.Col(
                 span=6,
-                class_name="card",
-                children=[
+                children=html.Div(className="card",children=[
                     # html.Label("Select the x axis category: "),
                     dmc.SegmentedControl(
                         id="scatter-x",
@@ -134,17 +147,22 @@ LEFT_TAB = html.Div([
                         ],
                     ),
                     dmc.LoadingOverlay(
-                        dcc.Graph(id="demographics", className="glow"),
-                        loaderProps=dict(variant="bars"),
+                        dcc.Graph(id="demographics", className="glow", config={ 'displayModeBar': False }),
+                        overlayOpacity=0.95,
+                        overlayColor="#1D2022",
+                        loaderProps=dict(color="orange", variant="bars"),
                     ),
-                    dmc.Text(TEXT_DEMOGRAPHICS, size="md")
-                ]
+                    html.Div([
+                        html.Img(src="assets/images/sql_demographics.png"),
+                        create_text_columns(demographics_data_dict, "tooltiptext"),
+                    ], className="tooltip")
+                ])
             ),
 
             dmc.Col(
                 span=6,
-                class_name="card",
-                children=[
+                
+                children=html.Div(className="card",children=[
                     dmc.SegmentedControl(
                         id="line-y",
                         # label="Select the y axis category:",
@@ -166,17 +184,22 @@ LEFT_TAB = html.Div([
                         value="calories_burnt",
                     ),
                     dmc.LoadingOverlay(
-                        dcc.Graph(id="fitness-line"),
-                        loaderProps=dict(variant="bars")
+                        dcc.Graph(id="fitness-line", className="glow", config={ 'displayModeBar': False }),
+                        overlayOpacity=0.95,
+                        overlayColor="#1D2022",
+                        loaderProps=dict(color="orange", variant="bars")
                     ),
-                    dmc.Text(TEXT_FITNESS_LINE, size="md"),
-                ]
+                    html.Div([
+                        html.Img(src="assets/images/sql_fitness.png"),
+                        create_text_columns(fitness_data_dict, "tooltiptext"),
+                    ], className="tooltip")
+                ])
             )
         ],
     ),
     
     html.Div(
-        className="card",
+        className="card card-centre",
         children=[
             ## HEAT MAP - CONTROLS
             dmc.Grid(
@@ -187,13 +210,13 @@ LEFT_TAB = html.Div([
                     dmc.Col(
                         span=4,
                         children=[
-                        html.Label("Select the fitness metric percentile range:"),
+                        html.Label("Filter by performance percentile"),
                         dcc.RangeSlider(
                             id="slider-val",
                             min=1,
                             max=100,
-                            step=None,
-                            value=[1, 100],
+                            value=[1, 100], 
+                            allowCross=False,
                         ),
                     ]),
 
@@ -202,7 +225,6 @@ LEFT_TAB = html.Div([
                         children=
                         dmc.Center(dmc.SegmentedControl(
                             id="heat-fitness",
-                            # label="Select the fitness metric:",
                             value="calories_burnt",
                             data=[
                                 {
@@ -226,23 +248,28 @@ LEFT_TAB = html.Div([
                         children=[
                             dmc.MultiSelect(
                                 id="heat-axes",
-                                label="Select the heat plot axes:",
-                                # description="You must select 2 axes categories",
+                                label="Choose displayed data",
                                 data=["age", "height", "weight"],
                                 value=["age", "height"],
                                 maxSelectedValues=2,
                             )
-                        ]
+                        ],
+                        style={"padding-bottom": "2vh"}
                     ),
                 ]
             ),
             ## HEAT MAP - FIGURE
             dmc.LoadingOverlay(
-                dcc.Graph(id="heat-fig"),
-                loaderProps=dict(variant="bars")
+                dcc.Graph(id="heat-fig", className="glow", config={ 'displayModeBar': False }),
+                        overlayOpacity=0.95,
+                        overlayColor="#1D2022",
+                        loaderProps=dict(color="orange", variant="bars")
             ),
-            dmc.Text(TEXT_HEAT_FIG, size="md"),
-        ]
+            html.Div([
+                html.Img(src="assets/images/sql_heatmap.png"),
+                create_text_columns(heatmap_data_dict, "tooltiptext"),
+            ], className="tooltip")
+        ], 
     )
 
 ], className="left-tab")
@@ -252,74 +279,80 @@ RIGHT_TAB = html.Div([
     dmc.Grid(
         justify="center",
         gutter="xl",
-        # style={"margin-bottom": 30, "margin-top": 30},
         children=[
-        
-        ## USER SELECTION
-        dmc.Col(
-            span=10,
-            children=[
-            dmc.Select(
-                id="user-id",
-                label="Select a specific user:",
-                data=dbx_utils.get_listofusers(dash_prepare=True),
-                value="1",
-            ),
-        ]),
-
+            dmc.Col(dmc.Title("Patient 19's fitness data", id="user-header", align="center", order=1), span=10), 
             
-        dmc.Col(
-            span=10,
-            children=dmc.Grid(class_name="card",children=[
-                ## USER TEXT INFO 1
-                dmc.Col(
-                    id="user-demo",
-                    class_name="user-demo-border",
-                    span=5,
-                    # style={"border": f"2px solid {dmc.theme.DEFAULT_COLORS['indigo'][4]}"},
-                ),
+            dmc.Col(
+                span=10,
+                children=[
+                    dmc.Grid(
+                        class_name="card",
+                        children=[
+                            ## User selection
+                            dmc.SegmentedControl(
+                                id="user-id",
+                                value="19",
+                                fullWidth=True,
+                                data=dbx_utils.get_listofusers(dash_prepare=True)
+                            ),
+                            ## USER TEXT INFO 1
+                            dmc.Col(
+                                dmc.LoadingOverlay(
+                                    id="user-demo",
+                                    overlayOpacity=0.95,
+                                    overlayColor="#1D2022",
+                                    loaderProps=dict(color="orange", variant="dots"), class_name="user-demo-border",
+                                ), span=6,
+                            ), 
 
+                            ## USER TEXT INFO 2
+                            dmc.Col(
+                                dmc.LoadingOverlay(
+                                    id="user-comp", 
+                                    overlayOpacity=0.95,
+                                    overlayColor="#1D2022",
+                                    loaderProps=dict(color="orange", variant="dots")
+                                ), span=6,
+                            )
+                        ]
+                    ),
+                ]
+            ),
 
-                ## USER TEXT INFO 2
-                dmc.Col(
-                    id="user-comp",
-                    span=5,
-                    # style={"border": f"2px solid {dmc.theme.DEFAULT_COLORS['indigo'][4]}",},
-                ),
-            ]),
-        ),
-
-        ## FIGURE
-        dmc.Col(
-            span=10,
-            children=[
-                ## METRIC FILTER
-                dmc.SegmentedControl(
-                    id="user-fit",
-                    # label="Select the fitness metric:",
-                    value="calories_burnt",
-                    fullWidth=True,
-                    data=[
-                        {
-                            "label": "Calories Burned",
-                            "value": "calories_burnt",
-                        },
-                        {
-                            "label": "Miles Walked",
-                            "value": "miles_walked",
-                        },
-                        {
-                            "label": "Number of Steps",
-                            "value": "num_steps",
-                        },
-                    ],
-                ),
-                ## FIGURE
-                dmc.LoadingOverlay(
-                    dcc.Graph(id="user-metrics-fig"),
-                    loaderProps=dict(variant="bars")
-                ),
-            ]
-        ),
-    ]),
+            ## FIGURE
+            dmc.Col(
+                span=10,
+                children=[
+                    ## METRIC FILTER
+                    dmc.SegmentedControl(
+                        id="user-fit",
+                        # label="Select the fitness metric:",
+                        value="calories_burnt",
+                        fullWidth=True,
+                        data=[
+                            {
+                                "label": "Calories Burned",
+                                "value": "calories_burnt",
+                            },
+                            {
+                                "label": "Miles Walked",
+                                "value": "miles_walked",
+                            },
+                            {
+                                "label": "Number of Steps",
+                                "value": "num_steps",
+                            },
+                        ],
+                    ),
+                    ## FIGURE
+                    dmc.LoadingOverlay(
+                        dcc.Graph(id="user-metrics-fig", className="glow", config={ 'displayModeBar': False }),
+                        overlayOpacity=0.95,
+                        overlayColor="#1D2022",
+                        loaderProps=dict(color="orange", variant="bars")
+                    ),
+                ]
+            ),
+        ]
+    ),
 ], className="right-tab")

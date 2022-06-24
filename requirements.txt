@@ -1,10 +1,9 @@
 dash==2.3.1
+dash-mantine-components==0.10.2
+dash-iconify==0.1.2
 pandas==1.3.0
 python-dotenv==0.20.0
 gunicorn==20.0.4
 databricks-sql-connector==2.0.2
 pyspark==3.2.1
 numpy
-dash-mantine-components==0.10.2
-dash-iconify==0.1.2
-scikit-image
