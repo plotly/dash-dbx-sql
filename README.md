@@ -11,15 +11,13 @@ Hannah Ker
    with special contributions from Daniel Anton Suchy & Tammy Do
 
 ## Links
-Medium Article @ https://plotlygraphs.medium.com/b9761c201717
+[Medium Article](https://plotlygraphs.medium.com/b9761c201717)
 
-Plotly Dash App @ https://dash-demo.plotly.host/dash-dbx-sql/
+[Plotly Dash App](https://dash-demo.plotly.host/dash-dbx-sql/)
 
 # Overview
 
-Python developers who want to connect a Plotly Dash web app front end to a Databricks back end will be well-served by the Databricks SQL connector for Python, a specific form of the recently announced Databricks SQL capability.
-
-https://docs.databricks.com/dev-tools/python-sql-connector.html#fetchall-method
+Python developers who want to connect a Plotly Dash web app front end to a Databricks back end will be well-served by the [Databricks SQL connector for Python](https://docs.databricks.com/dev-tools/python-sql-connector.html), a specific form of the recently announced Databricks SQL capability.
 
 This library allows Plotly Dash apps to very quickly run AND retrieve results of SQL queries that are executed on a Databricks cluster, thus allowing Databricks customers to extend their use of Databricks:
 
