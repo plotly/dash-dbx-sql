@@ -1,31 +1,27 @@
+
+/* ******** */
 /* left-tab */
+/* ******** */
+
 .left-tab .global-control {
     padding: 5vh 0;
     width: 10vw;
     margin: 0 auto;
 }
-/* css bullet points 3 columns */
-.bullet-points {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin: 0 auto;
-    width: 100%;
-}
 
-
+/* ********* */
 /* right tab */
+/* ********* */
 
 .user-demo-border {
     border-right: 2px solid #ccc;
     line-height: 2px;
 }
 
+/* *************** */
 /* Global settings */
-/* 
-.main-svg {
-    background: rgb(28, 32, 34);
-} */
+/* *************** */
+
 body {
     margin: 0 !important;
     background-color: #15171B;
@@ -38,31 +34,29 @@ body {
     padding: 20px !important;
 }
 
+/* remove background from notification icon */
+.mantine-Notification-icon {
+    background-color: transparent !important;
+    margin-left: 16px;
+}
 
+/* tab body left-right padding */
 .mantine-Tabs-body {
     padding: 0 5vw !important;
 }
-.mantine-Col-root{
-    margin: 0 auto !important;
-    /* align items middle */
-}
 
-.main-svg {
-    /* background: unset !important; */
-}
-.plot-container  {
-    color:white !important;
-}
-
+/* text padding */
 .mantine-Text-root {
     padding: 1vh 1vw;
 }
 
-
+/* ****** */
 /* Header */
+/* ****** */
 .header {
     display: flex;
     margin-bottom: 5vh;
+    padding-top: 1vh;
 }
 
 .header .header-title {
@@ -72,30 +66,27 @@ body {
     font-family: Open Sans, sans-serif;
 }
 
-.mantine-Tabs-tabInner {
-    color: #a2aab8;
-    font-size: 2vh;
-}
-.subheader-title {
+.header .subheader-title {
     font-size: 1.5vh;
 }
 
 .header img {
-    max-height: 4vh;
+    max-height: 5vh;
 }
+
 
 .header-logos-left {
     flex-grow: 4;
-    margin-left: 2vh;
-    margin-top: 1vh;
+    margin-left: 3vh;
 }
 .header-logos-right > img {
     float: left;
 }
 
+
 .header-text-middle {
     flex-grow: 4;
-    margin: 0 auto;
+    text-align: center;
 }
 
 
@@ -105,13 +96,11 @@ body {
 .header-logos-right > img {
     float: right;
     margin-right: 3vh;
-    margin-top: 1vh;
 }
 
 
 
 /* glow */
-
 
 
 .glow {

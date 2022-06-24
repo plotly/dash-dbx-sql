@@ -1,9 +1,71 @@
-from pydoc import classname
 from dash import html, dcc
 import dash_mantine_components as dmc
+from dash_iconify import DashIconify
 
 from utils import dbx_utils
 from constants import TEXT_DEMOGRAPHICS, TEXT_FITNESS_LINE, TEXT_HEAT_FIG
+
+
+def generate_usercomp(df, user, fitness):
+    useridx = df.index[df["user_id"] == int(user)].to_list()[0]
+    num_pat = len(df)
+    if useridx == 0:
+        usercomp = dmc.Text(
+            f"Of the {num_pat} patients in the study, Patient {user} had the lowest total {fitness.lower()}"
+        )
+    elif useridx == num_pat - 1:
+        usercomp = dmc.Text(
+            f"Of the {num_pat} patients in the study, Patient {user} had the highest total {fitness.lower()}"
+        )
+    else:
+        percentile = round((useridx + 1) / num_pat * 100, 2)
+        usercomp = dmc.Text(
+            f"Patient {user} had higher total {fitness.lower()} than {percentile}% of the {num_pat} patients in the study"
+        )
+    return usercomp
+
+
+def notification_user(text):
+    return dmc.Notification(
+        id="notify-user",
+        title="User Data",
+        message=[text],
+        disallowClose=True,
+        radius="xl",
+        icon=[DashIconify(icon="simple-icons:databricks", color="#DB4C39", width=128)],
+        action="show")
+
+def notification_scatter(text):
+    return dmc.Notification(
+        id="notify-scatter",
+        title="Risk Data",
+        message=[text],
+        disallowClose=True,
+        radius="xl",
+        icon=[DashIconify(icon="simple-icons:databricks", color="#DB4C39", width=128)],
+        action="show")
+
+def notification_line(text):
+    return dmc.Notification(
+        id="notify-line",
+        title="Daily Fitness Data",
+        message=[text],
+        disallowClose=True,
+        radius="xl",
+        icon=[DashIconify(icon="simple-icons:databricks", color="#DB4C39", width=128)],
+        action="show")
+
+def notification_heatmap(text, action):
+    return dmc.Notification(
+        id="notify-heatmap",
+        title="Heatmap Data",
+        message=[text],
+        disallowClose=True,
+        radius="xl",
+        icon=[DashIconify(icon="simple-icons:databricks", color="#DB4C39", width=128)],
+        action=action)
+
+
 
 def header(app, header_color, header, subheader=None, header_background_color="transparent"):
     
@@ -73,7 +135,7 @@ LEFT_TAB = html.Div([
                     ),
                     dmc.LoadingOverlay(
                         dcc.Graph(id="demographics", className="glow"),
-                        loaderProps=dict(variant="bars")
+                        loaderProps=dict(variant="bars"),
                     ),
                     dmc.Text(TEXT_DEMOGRAPHICS, size="md")
                 ]

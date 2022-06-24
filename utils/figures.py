@@ -15,7 +15,7 @@ def generate_scatter(df, xaxis, comp):
         "height": "Height (inches)",
         "weight": "Weight (lbs)",
     }
-    scatter = px.scatter(
+    fig = px.scatter(
         df,
         x=xaxis,
         y="risk",
@@ -25,8 +25,8 @@ def generate_scatter(df, xaxis, comp):
         labels={xaxis: axis_labels[xaxis]},
         title=f"Comparative Risk by Demographic",
     )
-    scatter.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7")
-    return scatter
+    fig.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7")
+    return fig
 
 
 def generate_line(df, yaxis, comp):
@@ -41,7 +41,7 @@ def generate_line(df, yaxis, comp):
         "miles_walked": "Miles Walked Daily",
         "num_steps": "Total Daily Steps",
     }
-    line = px.line(
+    fig = px.line(
         df,
         x="date",
         y=f"{yaxis}tot",
@@ -51,8 +51,8 @@ def generate_line(df, yaxis, comp):
         labels={f"{yaxis}tot": axis_labels[yaxis]},
         title=f"Comparative Daily Fitness Metrics by Demographic",
     )
-    line.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7")
-    return line
+    fig.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7")
+    return fig
 
 
 def generate_heat(df, axis1, axis2, fitness, comp):
@@ -69,7 +69,7 @@ def generate_heat(df, axis1, axis2, fitness, comp):
         "weight": "Weight (lbs)",
     }
     bin_sizes = {"age": 10, "height": 5, "weight": 20}
-    heat = px.density_heatmap(
+    fig = px.density_heatmap(
         df,
         x=axis1,
         y=axis2,
@@ -85,8 +85,8 @@ def generate_heat(df, axis1, axis2, fitness, comp):
             comp: axis_labels[comp],
         },
     )
-    heat.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7")
-    return heat
+    fig.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7")
+    return fig
 
 
 def generate_userbar(df, yaxis, user):
@@ -95,7 +95,7 @@ def generate_userbar(df, yaxis, user):
         "miles_walked": "Miles Walked Daily",
         "num_steps": "Total Daily Steps",
     }
-    line = px.bar(
+    fig = px.bar(
         df,
         x="date",
         y=f"{yaxis}",
@@ -103,24 +103,5 @@ def generate_userbar(df, yaxis, user):
         title=f"{axis_labels[yaxis]} for user with ID: {user}",
         text_auto=True,
     )
-    line.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7",)
-    return line
-
-
-def generate_usercomp(df, user, fitness):
-    useridx = df.index[df["user_id"] == int(user)].to_list()[0]
-    num_pat = len(df)
-    if useridx == 0:
-        usercomp = dmc.Text(
-            f"Of the {num_pat} patients in the study, Patient {user} had the lowest total {fitness.lower()}"
-        )
-    elif useridx == num_pat - 1:
-        usercomp = dmc.Text(
-            f"Of the {num_pat} patients in the study, Patient {user} had the highest total {fitness.lower()}"
-        )
-    else:
-        percentile = round((useridx + 1) / num_pat * 100, 2)
-        usercomp = dmc.Text(
-            f"Patient {user} had higher total {fitness.lower()} than {percentile}% of the {num_pat} patients in the study"
-        )
-    return usercomp
+    fig.update_layout(paper_bgcolor='#1c2022', plot_bgcolor="#1c2022", font_color="#A3AAB7",)
+    return fig
