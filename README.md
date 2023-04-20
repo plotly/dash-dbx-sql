@@ -13,7 +13,7 @@ Hannah Ker
 ## Links
 [Medium Article](https://plotlygraphs.medium.com/b9761c201717)
 
-[Plotly Dash App](https://dash-demo.plotly.host/dash-dbx-sql/)
+[Plotly Dash App](https://sales-demo.plotly.com/dash-dbx-sql/)
 
 [Youtube Video](https://www.youtube.com/watch?v=tmte0KqewD0)
 
